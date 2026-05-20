@@ -13,6 +13,9 @@ on:
   # ✅ MANUAL: Trigger a deploy manually from GitHub Actions tab
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   deploy:
     name: Deploy
@@ -25,12 +28,12 @@ jobs:
     steps:
       # Step 1: Check out the latest code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       # Step 2: Deploy to Cloudflare Pages via Wrangler
       - name: Deploy to Cloudflare Pages
         id: deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -47,17 +50,7 @@ jobs:
             const branch = context.payload.pull_request.head.ref;
             const sha = context.payload.pull_request.head.sha.substring(0, 7);
 
-            const body = `## 🚀 Preview Deployment Ready!
-
-            | Field | Value |
-            |-------|-------|
-            | 🔗 **Preview URL** | ${deploymentUrl} |
-            | 🌿 **Branch** | \`${branch}\` |
-            | 📝 **Commit** | \`${sha}\` |
-            | ⏱ **Status** | ✅ Live |
-
-            > **Review the preview above, then merge this PR to push changes to production.**
-            > Production site: https://owmd-site.pages.dev`;
+            const body = `## 🚀 Preview Deployment Ready!\n\n| Field | Value |\n|-------|-------|\n| 🔗 **Preview URL** | ${deploymentUrl} |\n| 🌿 **Branch** | \`${branch}\` |\n| 📝 **Commit** | \`${sha}\` |\n| ⏱ **Status** | ✅ Live |\n\n> **Review the preview above, then merge this PR to push changes to production.**\n> Production site: https://owmd-site.pages.dev`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
