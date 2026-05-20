@@ -5,6 +5,11 @@
 <title>Browse Properties | Only White Money Deals</title>
 <meta name="description" content="Browse verified white money properties in Indirapuram, Vasundhara, Kaushambi, Noida & Greater Noida.">
 <link rel="canonical" href="https://onlywhitemoneydeals.com/browse-properties.html">
+<meta property="og:title" content="Browse Properties | Only White Money Deals">
+<meta property="og:description" content="Browse verified 100% white money properties in Indirapuram, Vasundhara, Kaushambi, Noida & Greater Noida. No black money. MRICS certified broker.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://onlywhitemoneydeals.com/browse-properties.html">
+<meta property="og:image" content="https://onlywhitemoneydeals.com/assets/logo1.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="style.min.css" media="print" onload="this.media='all'">
@@ -359,7 +364,7 @@ function renderCarouselHTML(items,idx){
     const ac=i===idx?' active':'';
     return it2.type==='video'
       ?'<div class="carousel-video-thumb'+ac+'" onclick="goToSlide('+i+')">&#9654;</div>'
-      :'<img class="carousel-thumb'+ac+'" src="'+it2.src+'" onclick="goToSlide('+i+')">';
+      :'<img class="carousel-thumb'+ac+'" src="'+it2.src+'" alt="Property photo '+(i+1)+'" onclick="goToSlide('+i+')">';
   }).join('')+'</div>':'';
   return '<div class="modal-carousel"><div class="carousel-main">'+mainEl+nav+counter+'</div>'+thumbs+'</div>';
 }
