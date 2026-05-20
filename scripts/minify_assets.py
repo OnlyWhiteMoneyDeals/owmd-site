@@ -11,7 +11,7 @@ def minify_css(css):
 
 def minify_js(js):
     # Very basic JS minification (remove comments and extra whitespace)
-    js = re.sub(r'//.*?\n', '\n', js)
+    js = re.sub(r'(?<!http:)(?<!https:)//.*?\n', '\n', js)
     js = re.sub(r'/\*.*?\*/', '', js, flags=re.DOTALL)
     js = re.sub(r'\s*\n\s*', '\n', js)
     js = re.sub(r'[ \t]+', ' ', js)

@@ -10,7 +10,7 @@
   // Determine base path (handles pages in subdirectories if needed)
   const BASE = (function () {
     const path = location.pathname;
-    const depth = (path.match(/\//g) || []).length - 1;
+    const depth = path.split('/').length - 2;
     return depth > 0 ? '../'.repeat(depth) : '';
   })();
 
