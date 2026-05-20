@@ -33,18 +33,7 @@ if os.path.exists(css_src):
 else:
     print(f"Warning: CSS source not found at {css_src}")
 
-# Minify js/script.js
-js_src = os.path.join(base_path, 'js', 'script.js')
-js_dest = os.path.join(base_path, 'js', 'script.min.js')
-if os.path.exists(js_src):
-    with open(js_src, 'r', encoding='utf-8') as f:
-        script_content = f.read()
-    min_script = minify_js(script_content)
-    with open(js_dest, 'w', encoding='utf-8') as f:
-        f.write(min_script)
-    print(f"Minified JS: {js_src} -> {js_dest}")
-else:
-    print(f"Warning: JS source not found at {js_src}")
+
 
 # Minify js/loader.js
 loader_src = os.path.join(base_path, 'js', 'loader.js')

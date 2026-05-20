@@ -14,6 +14,21 @@
     return depth > 0 ? '../'.repeat(depth) : '';
   })();
 
+  // Start fetching partials immediately in parallel (non-blocking, triggers before DOMContentLoaded)
+  const navbarPromise = fetch(BASE + 'partials/navbar.html')
+    .then(r => r.ok ? r.text() : Promise.reject('Navbar fetch failed'))
+    .catch(err => {
+      console.warn(err);
+      return '';
+    });
+
+  const footerPromise = fetch(BASE + 'partials/footer.html')
+    .then(r => r.ok ? r.text() : Promise.reject('Footer fetch failed'))
+    .catch(err => {
+      console.warn(err);
+      return '';
+    });
+
   // Mark the active nav link based on current page filename
   function markActiveNav() {
     const page = location.pathname.split('/').pop() || 'index.html';
@@ -31,18 +46,6 @@
     });
   }
 
-  // Load a partial HTML file into a placeholder element
-  function loadPartial(placeholderId, url) {
-    const el = document.getElementById(placeholderId);
-    if (!el) return Promise.resolve();
-    return fetch(BASE + url)
-      .then(r => {
-        if (!r.ok) throw new Error('Failed to load ' + url);
-        return r.text();
-      })
-      .then(html => { el.innerHTML = html; });
-  }
-
   // Initialize all interactive JS (formerly script.js) — runs after partials load
   function initScripts() {
     markActiveNav();
@@ -56,7 +59,7 @@
     const pills = document.querySelectorAll('.pill-link');
     const pillsContainer = document.querySelector('.mobile-section-pills');
 
-    // Single rAF-throttled scroll handler
+    // Single rAF-throttled scroll handler for lightweight visual states only (extremely performant!)
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (ticking) return;
@@ -66,28 +69,59 @@
         navbar.classList.toggle('scrolled', scrollY > 40);
         if (stBtn) stBtn.classList.toggle('visible', scrollY > 400);
 
-        let current = '';
-        sections.forEach(sec => {
-          if (scrollY >= sec.offsetTop - navbar.offsetHeight - 60)
-            current = sec.getAttribute('id');
+        // If at the very top, clear active styles of scroll spy anchors
+        if (scrollY < 50) {
+          navAnchors.forEach(a => {
+            if (!a.classList.contains('nav-active')) {
+              a.style.color = '';
+            }
+          });
+          pills.forEach(p => p.classList.remove('active'));
+        }
+
+        ticking = false;
+      });
+    }, { passive: true });
+
+    // Scroll Spy via IntersectionObserver (Zero layout thrashing!)
+    if (sections.length > 0) {
+      const spyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            if (id) {
+              updateSpyHighlights(id);
+            }
+          }
         });
+      }, {
+        // Triggers when section passes the top 80px (navbar height) down to 60% of the screen
+        rootMargin: '-80px 0px -60% 0px',
+        threshold: 0
+      });
+
+      sections.forEach(sec => spyObserver.observe(sec));
+
+      function updateSpyHighlights(id) {
         navAnchors.forEach(a => {
-          if (!a.classList.contains('nav-active'))
-            a.style.color = a.getAttribute('href') === '#' + current ? 'var(--purple)' : '';
+          if (!a.classList.contains('nav-active')) {
+            a.style.color = a.getAttribute('href') === '#' + id ? 'var(--purple)' : '';
+          }
         });
 
         if (pills.length > 0) {
           pills.forEach(p => {
-            const isActive = p.getAttribute('href') === '#' + current;
+            const isActive = p.getAttribute('href') === '#' + id;
             p.classList.toggle('active', isActive);
             if (isActive && pillsContainer && window.innerWidth <= 768) {
-              pillsContainer.scrollLeft = p.offsetLeft - pillsContainer.offsetWidth / 2 + p.offsetWidth / 2;
+              requestAnimationFrame(() => {
+                pillsContainer.scrollLeft = p.offsetLeft - pillsContainer.offsetWidth / 2 + p.offsetWidth / 2;
+              });
             }
           });
         }
-        ticking = false;
-      });
-    }, { passive: true });
+      }
+    }
 
     // Mobile hamburger
     const hamburger = document.getElementById('hamburger');
@@ -174,14 +208,25 @@
     document.dispatchEvent(new CustomEvent('owmdReady'));
   }
 
-  // Boot: load both partials in parallel, then init
-  document.addEventListener('DOMContentLoaded', function () {
-    Promise.all([
-      loadPartial('navbar-root', 'partials/navbar.html'),
-      loadPartial('footer-root', 'partials/footer.html')
-    ]).then(initScripts).catch(function (err) {
-      console.warn('OWMD loader:', err);
-      initScripts(); // still init even if partials fail
-    });
-  });
+  // Boot: wait for DOM to be parsed, inject preloaded partials, and init
+  function boot() {
+    Promise.all([navbarPromise, footerPromise])
+      .then(([navHtml, footHtml]) => {
+        const navEl = document.getElementById('navbar-root');
+        const footEl = document.getElementById('footer-root');
+        if (navEl && navHtml) navEl.innerHTML = navHtml;
+        if (footEl && footHtml) footEl.innerHTML = footHtml;
+        initScripts();
+      })
+      .catch(err => {
+        console.warn('OWMD boot error:', err);
+        initScripts(); // still init even if partials fail
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();

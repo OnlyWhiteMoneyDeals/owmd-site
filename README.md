@@ -67,9 +67,7 @@ owmd-site/
 │   └── style.min.css       # Minified stylesheet (production)
 ├── js/
 │   ├── loader.js           # Dynamic component loader (source)
-│   ├── loader.min.js       # Production minified loader (New!)
-│   ├── script.js           # Main JS (source)
-│   └── script.min.js       # Minified JS (production)
+│   └── loader.min.js       # Production minified loader (production)
 ├── scripts/
 │   ├── minify_assets.py    # Build script to compile/minify CSS/JS
 │   └── used_classes.txt    # CSS selector definitions
@@ -116,7 +114,7 @@ CSS and JS minification is handled by the included Python script:
 python3 scripts/minify_assets.py
 ```
 
-This compiles `css/style.css` and `js/loader.js` (along with `js/script.js`) into optimized minified files.
+This compiles `css/style.css` and `js/loader.js` into optimized minified files.
 
 ---
 
