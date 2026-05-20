@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OWMD Team Portal</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/logo1.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --purple: #6B1FA8;
+      --purple-dark: #5B21B6;
+      --purple-light: #8B5CF6;
+      --purple-bg: #F5F3FF;
+      --black: #111;
+      --white: #fff;
+      --off-white: #F8F9FA;
+      --text: #1A1A2E;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(139, 53, 200, 0.12);
+      --transition: all 0.3s ease;
+      --green: #059669;
+      --red: #DC2626;
+      --amber: #D97706
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      font-size: 16px
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--off-white);
+      min-height: 100vh
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Playfair Display', serif
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    /* LOGIN */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1A1A2E, #2D1B69);
+      padding: 20px
+    }
+
+    .login-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4)
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px
+    }
+
+    .login-logo img {
+      max-width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto
+    }
+
+    .login-logo p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em
+    }
+
+    .login-title {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 28px
+    }
+
+    .login-group {
+      margin-bottom: 18px
+    }
+
+    .login-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px
+    }
+
+    .login-group input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: var(--transition)
+    }
+
+    .login-group input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(107, 31, 168, 0.1)
+    }
+
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 8px;
+      transition: var(--transition)
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow)
+    }
+
+    .login-error {
+      display: none;
+      color: #DC2626;
+      font-size: 0.82rem;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600
+    }
+
+    .login-error.show {
+      display: block
+    }
+
+    /* DASHBOARD */
+    .dashboard {
+      display: none;
+      min-height: 100vh
+    }
+
+    .dashboard.active {
+      display: block
+    }
+
+    .dash-header {
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .dash-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 12px
+    }
+
+    .dash-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .dash-logo-pill {
+      background: #fff;
+      border-radius: 8px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center
+    }
+
+    .dash-logo-pill img {
+      max-height: 32px;
+      width: auto;
+      display: block
+    }
+
+    .dash-logo span {
+      font-size: 0.95rem;
+      font-weight: 700;
+      opacity: 0.9;
+      white-space: nowrap
+    }
+
+    .dash-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition)
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.25)
+    }
+
+    .dash-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px
+    }
+
+    .stat-card.purple::before {
+      background: linear-gradient(90deg, var(--purple), var(--purple-light))
+    }
+
+    .stat-card.green::before {
+      background: linear-gradient(90deg, #10B981, #059669)
+    }
+
+    .stat-card.amber::before {
+      background: linear-gradient(90deg, #F59E0B, #D97706)
+    }
+
+    .stat-card.blue::before {
+      background: linear-gradient(90deg, #3B82F6, #1D4ED8)
+    }
+
+    .stat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 8px
+    }
+
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-family: 'Playfair Display', serif;
+      line-height: 1;
+      margin-bottom: 4px
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em
+    }
+
+    /* TABS */
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: #fff;
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow)
+    }
+
+    .tab-btn {
+      padding: 9px 20px;
+      border-radius: 9px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+      background: none;
+      font-family: inherit;
+      transition: var(--transition);
+      white-space: nowrap
+    }
+
+    .tab-btn.active {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(107, 31, 168, 0.3)
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--purple-bg);
+      color: var(--purple)
+    }
+
+    .tab-panel {
+      display: none
+    }
+
+    .tab-panel.active {
+      display: block
+    }
+
+    /* ADD PROPERTY BUTTON */
+    .btn-add {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: var(--transition);
+      white-space: nowrap
+    }
+
+    .btn-add:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.35)
+    }
+
+    /* PANEL */
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700
+    }
+
+    .search-bar input {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: var(--transition);
+      min-width: 200px
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--purple)
+    }
+
+    /* TABLE */
+    .table-wrap {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden
+    }
+
+    .overflow-x {
+      overflow-x: auto
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .admin-table th {
+      background: var(--purple-bg);
+      color: var(--purple);
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap
+    }
+
+    .admin-table td {
+      padding: 12px 14px;
+      font-size: 0.83rem;
+      border-bottom: 1px solid #F3F4F6;
+      vertical-align: middle;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .admin-table tr:last-child td {
+      border-bottom: none
+    }
+
+    .admin-table tr:hover td {
+      background: #FAFAFA
+    }
+
+    /* BADGES */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700
+    }
+
+    .badge-pending {
+      background: #FEF3C7;
+      color: #92400E
+    }
+
+    .badge-verified {
+      background: #D1FAE5;
+      color: #065F46
+    }
+
+    .badge-sold {
+      background: #DBEAFE;
+      color: #1E40AF
+    }
+
+    .badge-new {
+      background: #FEF3C7;
+      color: #92400E
+    }
+
+    .badge-contacted {
+      background: #D1FAE5;
+      color: #065F46
+    }
+
+    .badge-closed {
+      background: #F3F4F6;
+      color: #374151
+    }
+
+    /* ACTION BUTTONS */
+    .action-btns {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap
+    }
+
+    .btn-action {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: var(--transition)
+    }
+
+    .btn-verify {
+      background: #D1FAE5;
+      color: #065F46
+    }
+
+    .btn-verify:hover {
+      background: #059669;
+      color: #fff
+    }
+
+    .btn-unverify {
+      background: #FEF3C7;
+      color: #92400E
+    }
+
+    .btn-unverify:hover {
+      background: #D97706;
+      color: #fff
+    }
+
+    .btn-sold {
+      background: #DBEAFE;
+      color: #1E40AF
+    }
+
+    .btn-sold:hover {
+      background: #1D4ED8;
+      color: #fff
+    }
+
+    .btn-delete {
+      background: #FEE2E2;
+      color: #991B1B
+    }
+
+    .btn-delete:hover {
+      background: #DC2626;
+      color: #fff
+    }
+
+    .btn-contact {
+      background: #EDE9FE;
+      color: #5B21B6
+    }
+
+    .btn-contact:hover {
+      background: var(--purple);
+      color: #fff
+    }
+
+    .btn-close-lead {
+      background: #F3F4F6;
+      color: #374151
+    }
+
+    .btn-close-lead:hover {
+      background: #6B7280;
+      color: #fff
+    }
+
+    .empty-row td {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px;
+      font-size: 0.9rem
+    }
+
+    /* MODAL */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 30, 0.65);
+      z-index: 9000;
+      backdrop-filter: blur(4px);
+      overflow-y: auto;
+      padding: 20px
+    }
+
+    .modal-bg.active {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+      animation: mIn 0.3s ease;
+      overflow: hidden
+    }
+
+    @keyframes mIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--purple-bg)
+    }
+
+    .modal-head h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--purple)
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: var(--transition)
+    }
+
+    .modal-close-btn:hover {
+      background: var(--border)
+    }
+
+    .modal-body {
+      padding: 24px;
+      max-height: 75vh;
+      overflow-y: auto
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px
+    }
+
+    .form-group {
+      margin-bottom: 16px
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: var(--transition);
+      background: #fff
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(107, 31, 168, 0.1)
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .modal-footer-btns {
+      display: flex;
+      gap: 10px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      justify-content: flex-end
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: #fff;
+      border: none;
+      padding: 11px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition)
+    }
+
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow)
+    }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      color: var(--muted);
+      border: none;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition)
+    }
+
+    .btn-cancel:hover {
+      background: #e0e0e0
+    }
+
+    /* MOBILE CARDS (replaces table on small screens) */
+    .addr-wrap {
+      position: relative;
+      display: flex;
+      gap: 8px;
+    }
+
+    .addr-wrap input {
+      flex: 1;
+    }
+
+    .btn-map-pin {
+      background: #F3F4F6;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 0 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: var(--transition);
+      color: var(--text)
+    }
+
+    .btn-map-pin:hover {
+      background: var(--purple-bg);
+      border-color: var(--purple);
+      color: var(--purple)
+    }
+
+    /* Map Picker Modal */
+    .map-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px)
+    }
+
+    .map-modal-overlay.active {
+      display: flex
+    }
+
+    .map-modal {
+      background: #fff;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column
+    }
+
+    .map-modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--purple);
+      color: #fff
+    }
+
+    .map-modal-header h3 {
+      font-size: 1.1rem;
+      margin: 0
+    }
+
+    .map-modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer
+    }
+
+    .map-modal-body {
+      height: 400px;
+      position: relative
+    }
+
+    .map-modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #E5E7EB;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: #FAFAFA
+    }
+
+    .btn-map-confirm {
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition)
+    }
+
+    .btn-map-confirm:disabled {
+      opacity: 0.6;
+      cursor: not-allowed
+    }
+
+    .map-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--purple)
+    }
+
+    .addr-suggestions {
+      display: none;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid var(--purple);
+      border-radius: 10px;
+      z-index: 9500;
+      max-height: 260px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(107, 31, 168, 0.18);
+    }
+
+    .addr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F3F4F6;
+      transition: background 0.15s;
+      font-size: 0.82rem
+    }
+
+    .addr-item:last-child {
+      border-bottom: none
+    }
+
+    .addr-item:hover {
+      background: var(--purple-bg)
+    }
+
+    .addr-item-pin {
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .addr-item-main {
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3
+    }
+
+    .addr-item-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .addr-loading {
+      padding: 12px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted)
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 12px
+    }
+
+    .media-grid img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+      border: 1px solid var(--border)
+    }
+
+    .media-video-wrap {
+      margin-bottom: 24px
+    }
+
+    .media-video-wrap video {
+      width: 100%;
+      max-height: 400px;
+      border-radius: 8px;
+      background: #000
+    }
+
+    @media(max-width:700px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px
+      }
+
+      .stat-card {
+        padding: 14px
+      }
+
+      .stat-value {
+        font-size: 1.8rem
+      }
+
+      .tabs-row {
+        flex-direction: column;
+        align-items: stretch
+      }
+
+      .tabs {
+        width: 100%;
+        overflow-x: auto
+      }
+
+      .panel-header {
+        flex-direction: column;
+        align-items: stretch
+      }
+
+      .search-bar input {
+        width: 100%;
+        min-width: unset
+      }
+
+      .form-row {
+        grid-template-columns: 1fr
+      }
+
+      .admin-table thead {
+        display: none
+      }
+
+      .admin-table,
+      tbody,
+      tr,
+      td {
+        display: block
+      }
+
+      .admin-table tr {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        padding: 12px;
+        background: #fff
+      }
+
+      .admin-table td {
+        max-width: 100%;
+        white-space: normal;
+        padding: 4px 0;
+        border: none;
+        font-size: 0.82rem
+      }
+
+      .admin-table td::before {
+        content: attr(data-label);
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        display: block;
+        margin-bottom: 2px
+      }
+
+      .table-wrap {
+        background: transparent;
+        border: none;
+        box-shadow: none
+      }
+
+      .overflow-x {
+        overflow-x: unset
+      }
+    }
+
+    @media(max-width:480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .login-card {
+        padding: 32px 24px
+      }
+
+      .dash-logo span {
+        display: none
+      }
+
+      .modal-box {
+        border-radius: 14px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loginWrap" class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo"><img src="assets/logo1.png" alt="OWMD">
+        <p>Team Portal</p>
+      </div>
+      <h2 class="login-title">Sign In</h2>
+      <form onsubmit="doLogin(event)">
+        <div class="login-group"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@owmd.com"
+            autocomplete="username"></div>
+        <div class="login-group"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"
+            autocomplete="current-password"></div>
+        <div class="login-error" id="loginError">Invalid email or password</div>
+        <button type="submit" class="btn-login">Sign In →</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard" class="dashboard">
+    <header class="dash-header">
+      <div class="dash-header-inner">
+        <div class="dash-logo">
+          <div class="dash-logo-pill"><img src="assets/logo1.png" alt="OWMD"></div><span>Admin Panel</span>
+        </div>
+        <div class="dash-header-right">
+          <a href="index.html" class="btn-logout">← Site</a>
+          <button class="btn-logout" onclick="doLogout()">Sign Out</button>
+        </div>
+      </div>
+    </header>
+    <div class="dash-content">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="tabs-row">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('listings',this)">🏘 Listings</button>
+          <button class="tab-btn" onclick="switchTab('interests',this)">💬 Buyer Interests</button>
+        </div>
+        <button class="btn-add" onclick="openAddModal()">＋ Add Property</button>
+      </div>
+      <div class="tab-panel active" id="tab-listings">
+        <div class="panel-header">
+          <div class="panel-title">All Property Listings</div>
+          <div class="search-bar"><input type="text" id="listingSearch" placeholder="Search listings…"
+              oninput="renderListings()"></div>
+        </div>
+        <div class="table-wrap overflow-x">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Price</th>
+                <th>Size</th>
+                <th>Seller</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="listingsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-interests">
+        <div class="panel-header">
+          <div class="panel-title">Buyer Interests</div>
+          <div class="search-bar"><input type="text" id="interestSearch" placeholder="Search buyers…"
+              oninput="renderInterests()"></div>
+        </div>
+        <div class="table-wrap overflow-x">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Buyer</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Property</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="interestsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT PROPERTY MODAL -->
+  <div class="modal-bg" id="addModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="modalTitle">Add New Property</h3>
+        <button class="modal-close-btn" onclick="closeAddModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editId">
+        <div class="form-row">
+          <div class="form-group"><label>Property Type *</label>
+            <select id="fType">
+              <option value="">Select type</option>
+              <option>Flat</option>
+              <option>Builder Floor</option>
+              <option>Plot</option>
+              <option>Shop</option>
+              <option>Office</option>
+              <option>Warehouse</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Location *</label>
+            <select id="fLocation">
+              <option value="">Select location</option>
+              <option>Indirapuram</option>
+              <option>Vasundhara</option>
+              <option>Kaushambi</option>
+              <option>Noida</option>
+              <option>Greater Noida</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Price (₹) *</label><input type="number" id="fPrice" placeholder="e.g. 8500000">
+          </div>
+          <div class="form-group"><label>Size (sqft) *</label><input type="number" id="fSize" placeholder="e.g. 1200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Bedrooms (0 for commercial)</label><input type="number" id="fBedrooms"
+              placeholder="0" min="0" max="10"></div>
+          <div class="form-group"><label>Status</label>
+            <select id="fStatus">
+              <option value="pending">⏳ Pending</option>
+              <option value="verified">✅ Verified</option>
+              <option value="sold">🔵 Sold</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="fDesc"
+            placeholder="Property description…"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Seller Name</label><input type="text" id="fSellerName" placeholder="Full name">
+          </div>
+          <div class="form-group"><label>Seller Phone</label><input type="tel" id="fSellerPhone"
+              placeholder="+91 XXXXX XXXXX"></div>
+        </div>
+        <div class="form-group"><label>Seller Email</label><input type="email" id="fSellerEmail"
+            placeholder="seller@email.com"></div>
+        <div class="form-group">
+          <label>Property Address <span
+              style="font-size:0.7rem;color:var(--muted);font-weight:400;text-transform:none">(shown only to OWMD
+              team)</span></label>
+          <div class="addr-wrap">
+            <input type="text" id="fAddress" placeholder="Start typing address..." autocomplete="off"
+              oninput="addrInput(this,'fAddrDrop','fAddressMapLink')">
+            <button type="button" class="btn-map-pin" onclick="openMapPicker('fAddress','fAddressMapLink')"
+              title="Pick from Map">&#128205;</button>
+            <div class="addr-suggestions" id="fAddrDrop"></div>
+          </div>
+          <a id="fAddressMapLink" href="#" target="_blank" rel="noopener"
+            style="display:none;font-size:0.75rem;color:var(--purple);margin-top:5px;font-weight:700">&#128205; Preview
+            on Google Maps</a>
+        </div>
+      </div>
+      <div class="modal-footer-btns">
+        <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+        <button class="btn-save" onclick="saveProperty()">Save Property</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Picker Modal -->
+  <div class="map-modal-overlay" id="mapPickerModal">
+    <div class="map-modal">
+      <div class="map-modal-header">
+        <h3>Select Location</h3>
+        <button class="map-modal-close" onclick="closeMapPicker()">&times;</button>
+      </div>
+      <div class="map-modal-body" id="mapPickerDiv">
+        <div class="map-loading-overlay" id="mapLoadingOverlay">Fetching address...</div>
+      </div>
+      <div class="map-modal-footer">
+        <span id="mapPickedAddrText"
+          style="flex:1;font-size:0.8rem;color:var(--muted);align-self:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Click
+          on the map to drop a pin</span>
+        <button type="button" class="btn-cancel" onclick="closeMapPicker()"
+          style="background:#E5E7EB;color:var(--text);border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer">Cancel</button>
+        <button type="button" class="btn-map-confirm" id="btnConfirmMap" disabled onclick="confirmMapPick()">Confirm
+          Location</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIA MODAL -->
+  <div class="modal-bg" id="mediaModal">
+    <div class="modal-box" style="max-width:800px;">
+      <div class="modal-head">
+        <h3>Property Media</h3>
+        <button class="modal-close-btn" onclick="closeMediaModal()">✕</button>
+      </div>
+      <div class="modal-body" id="mediaModalBody">
+        <!-- Content injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // const ADMIN_EMAIL='admin@onlywhitemoneydeals.com',ADMIN_PASS='owmd@admin2024';
+    const _sUrl = 'https://lidrknxjezctdjrxwffz.supabase.co';
+    const _sKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxpZHJrbnhqZXpjdGRqcnh3ZmZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzczODQsImV4cCI6MjA5NDc1MzM4NH0.xTQ2PFpQtG6f_C-2IitVCwFWBYJhnlU9Ei5oA5rhL48';
+    const supabaseClient = window.supabase.createClient(_sUrl, _sKey);
+
+    let cachedListings = [];
+    let cachedInterests = [];
+
+    function getAllListings() { return cachedListings; }
+
+    async function fetchListings() {
+      const { data, error } = await supabaseClient.from('properties').select('*').order('created_at', { ascending: false });
+      if (!error && data) cachedListings = data;
+    }
+
+    async function fetchInterests() {
+      const { data, error } = await supabaseClient.from('buyer_interests').select('*').order('created_at', { ascending: false });
+      if (!error && data) cachedInterests = data;
+    }
+
+    function formatPrice(p) {
+      if (p >= 10000000) return '₹' + (p / 10000000).toFixed(2) + ' Cr';
+      if (p >= 100000) return '₹' + (p / 100000).toFixed(1) + ' L';
+      return '₹' + p.toLocaleString('en-IN');
+    }
+    function formatDate(d) { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+
+    async function doLogin(e) {
+      e.preventDefault();
+      const em = document.getElementById('loginEmail').value.trim();
+      const pw = document.getElementById('loginPass').value;
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Logging in...'; btn.disabled = true;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email: em, password: pw });
+
+      if (error) {
+        document.getElementById('loginError').classList.add('show');
+        document.getElementById('loginError').textContent = error.message;
+        btn.textContent = 'Login to Dashboard'; btn.disabled = false;
+      } else {
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('dashboard').classList.add('active');
+        initDashboard();
+      }
+    }
+    async function doLogout() { await supabaseClient.auth.signOut(); location.reload(); }
+    async function initDashboard() { await fetchListings(); await fetchInterests(); renderStats(); renderListings(); renderInterests(); }
+
+    function renderStats() {
+      const listings = getAllListings();
+      const interests = cachedInterests;
+      const pending = listings.filter(l => l.status === 'pending').length;
+      const verified = listings.filter(l => l.status === 'verified').length;
+      document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card purple"><div class="stat-icon">🏘️</div><div class="stat-value">${listings.length}</div><div class="stat-label">Total Listings</div></div>
+    <div class="stat-card amber"><div class="stat-icon">⏳</div><div class="stat-value">${pending}</div><div class="stat-label">Pending Review</div></div>
+    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value">${verified}</div><div class="stat-label">Verified</div></div>
+    <div class="stat-card blue"><div class="stat-icon">💬</div><div class="stat-value">${interests.length}</div><div class="stat-label">Buyer Interests</div></div>`;
+    }
+
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Phone encode/decode — same XOR key as list-property.html
+    function encodePhone(p) { const k = 'owmd2024'; try { return btoa(p.split('').map(function (c, i) { return String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length)); }).join('')); } catch (e) { return p; } }
+    function decodePhone(enc) { const k = 'owmd2024'; try { const d = atob(enc); return d.split('').map(function (c, i) { return String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length)); }).join(''); } catch (e) { return enc; } }
+
+    function renderListings() {
+      const q = (document.getElementById('listingSearch').value || '').toLowerCase();
+      let list = getAllListings();
+      if (q) list = list.filter(l => (l.type + l.location + (l.seller_name || '')).toLowerCase().includes(q));
+      const badgeClass = s => s === 'verified' ? 'badge-verified' : s === 'sold' ? 'badge-sold' : 'badge-pending';
+      const badgeLabel = s => s === 'verified' ? '&#x2705; Verified' : s === 'sold' ? '&#x1F535; Sold' : '&#x23F3; Pending';
+      const rows = list.map(function (l) {
+        const rawPhone = decodePhone(l.seller_phone || '');
+        const mapsUrl = l.address ? 'https://maps.google.com/?q=' + encodeURIComponent(l.address) : '';
+        const addrCell = l.address
+          ? '<a href="' + mapsUrl + '" target="_blank" rel="noopener" title="' + l.address + '" style="color:var(--purple);font-size:0.78rem">&#128205; Map</a>'
+          : '<span style="color:var(--muted);font-size:0.78rem">—</span>';
+        return '<tr>'
+          + '<td data-label="Type"><strong>' + l.type + '</strong></td>'
+          + '<td data-label="Location">' + l.location + '</td>'
+          + '<td data-label="Price">' + formatPrice(l.price) + '</td>'
+          + '<td data-label="Size">' + l.size.toLocaleString() + ' sqft</td>'
+          + '<td data-label="Seller"><div style="font-size:0.82rem">' + (l.seller_name || '—') + '</div><div style="font-size:0.75rem;color:var(--muted)">' + rawPhone + '</div>' + addrCell + '</td>'
+          + '<td data-label="Date">' + formatDate(l.created_at) + '</td>'
+          + '<td data-label="Status"><span class="status-badge ' + badgeClass(l.status) + '">' + badgeLabel(l.status) + '</span></td>'
+          + '<td data-label="Actions"><div class="action-btns">'
+          + (l.status !== 'verified' ? '<button class="btn-action btn-verify" onclick="setStatus(\'' + l.id + '\',\'verified\')">&#x2705; Verify</button>' : '')
+          + (l.status === 'verified' ? '<button class="btn-action btn-unverify" onclick="setStatus(\'' + l.id + '\',\'pending\')">&#x21A9; Unverify</button>' : '')
+          + (l.status !== 'sold' ? '<button class="btn-action btn-sold" onclick="setStatus(\'' + l.id + '\',\'sold\')">Sold</button>' : '')
+          + (((l.photos && l.photos.length > 0) || l.video_url) ? '<button class="btn-action" style="background:#DBEAFE;color:#1E40AF" onclick="openMediaModal(\'' + l.id + '\')" title="View Media">📷 Media</button>' : '')
+          + '<button class="btn-action btn-contact" onclick="contactSeller(\'' + l.id + '\',\'' + l.type + '\',\'' + l.location + '\')" title="WhatsApp seller">&#128222;</button>'
+          + '<button class="btn-action" style="background:#EDE9FE;color:#5B21B6" onclick="openEditModal(\'' + l.id + '\')" title="Edit">&#9998;</button>'
+          + '<button class="btn-action btn-delete" onclick="deleteListing(\'' + l.id + '\')" title="Delete">&#128465;</button>'
+          + '</div></td></tr>';
+      }).join('');
+      document.getElementById('listingsTbody').innerHTML = rows || '<tr class="empty-row"><td colspan="8">No listings found.</td></tr>';
+    }
+
+    async function setStatus(id, status) {
+      await supabaseClient.from('properties').update({ status }).eq('id', id);
+      await initDashboard();
+    }
+
+    async function deleteListing(id) {
+      if (!confirm('Delete this listing permanently?')) return;
+      await supabaseClient.from('properties').delete().eq('id', id);
+      await initDashboard();
+    }
+
+    function contactSeller(id, type, loc) {
+      const all = getAllListings();
+      const l = all.find(x => x.id === id);
+      const phone = l ? decodePhone(l.seller_phone || '') : '';
+      if (!phone) { alert('No seller phone number available.'); return; }
+      const msg = 'Hi, I am from OWMD team. Your ' + type + ' listing in ' + loc + ' is under review. Please share more details.';
+      window.open('https://wa.me/91' + phone.replace(/\D/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    // ADD / EDIT MODAL
+    function openAddModal() {
+      document.getElementById('modalTitle').textContent = 'Add New Property';
+      document.getElementById('editId').value = '';
+      ['fType', 'fLocation', 'fDesc', 'fSellerName', 'fSellerPhone', 'fSellerEmail', 'fAddress'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      document.getElementById('fPrice').value = '';
+      document.getElementById('fSize').value = '';
+      document.getElementById('fBedrooms').value = '0';
+      document.getElementById('fStatus').value = 'pending';
+      document.getElementById('addModal').classList.add('active');
+    }
+
+    function openEditModal(id) {
+      const all = getAllListings();
+      const l = all.find(x => x.id === id);
+      if (!l) return;
+      document.getElementById('modalTitle').textContent = 'Edit Property';
+      document.getElementById('editId').value = l.id;
+      document.getElementById('fType').value = l.type;
+      document.getElementById('fLocation').value = l.location;
+      document.getElementById('fPrice').value = l.price;
+      document.getElementById('fSize').value = l.size;
+      document.getElementById('fBedrooms').value = l.bedrooms || 0;
+      document.getElementById('fStatus').value = l.status;
+      document.getElementById('fDesc').value = l.description || '';
+      document.getElementById('fSellerName').value = l.seller_name || '';
+      document.getElementById('fSellerPhone').value = decodePhone(l.seller_phone || '');
+      document.getElementById('fSellerEmail').value = l.seller_email || '';
+      const addrEl = document.getElementById('fAddress');
+      if (addrEl) addrEl.value = l.address || '';
+      document.getElementById('addModal').classList.add('active');
+    }
+
+
+    function updateMapPreview(addr) {
+      const link = document.getElementById('fAddressMapLink');
+      if (!link) return;
+      if (addr.trim()) {
+        link.href = 'https://maps.google.com/?q=' + encodeURIComponent(addr.trim());
+        link.style.display = 'inline-block';
+      } else {
+        link.style.display = 'none';
+      }
+    }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('active'); }
+
+    function openMediaModal(id) {
+      const all = getAllListings();
+      const l = all.find(x => x.id === id);
+      if (!l) return;
+      const body = document.getElementById('mediaModalBody');
+      body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Loading media...</div>';
+      document.getElementById('mediaModal').classList.add('active');
+
+      let html = '';
+      if (l.video_url) {
+        html += '<div class="media-video-wrap"><h4 style="margin-bottom:12px;font-family:Inter;font-weight:700">Video Tour</h4><video id="mediaModalVideo" controls playsinline src="' + l.video_url + '"></video></div>';
+      }
+      if (l.photos && l.photos.length > 0) {
+        html += '<h4 style="margin-bottom:12px;font-family:Inter;font-weight:700">Photos (' + l.photos.length + ')</h4><div class="media-grid">';
+        l.photos.forEach(p => { html += `<a href="${p}" target="_blank"><img src="${p}" alt="Photo"></a>`; });
+        html += '</div>';
+      } else if (!l.video_url) {
+        html = '<div style="text-align:center;padding:40px;color:var(--muted)">No media available for this property.</div>';
+      }
+
+      body.innerHTML = html;
+    }
+
+    function closeMediaModal() {
+      document.getElementById('mediaModal').classList.remove('active');
+      const v = document.getElementById('mediaModalVideo');
+      if (v) { v.pause(); v.src = ''; }
+    }
+
+    async function saveProperty() {
+      const type = document.getElementById('fType').value;
+      const location = document.getElementById('fLocation').value;
+      const price = parseInt(document.getElementById('fPrice').value);
+      const size = parseInt(document.getElementById('fSize').value);
+      if (!type || !location || !price || !size) { alert('Please fill Type, Location, Price and Size.'); return; }
+      const editId = document.getElementById('editId').value;
+      const rawPhone = document.getElementById('fSellerPhone').value.trim();
+      const addrEl = document.getElementById('fAddress');
+      const prop = {
+        type, location, price, size,
+        bedrooms: parseInt(document.getElementById('fBedrooms').value) || 0,
+        status: document.getElementById('fStatus').value,
+        description: document.getElementById('fDesc').value.trim(),
+        address: addrEl ? addrEl.value.trim() : '',
+        seller_name: document.getElementById('fSellerName').value.trim(),
+        seller_phone: encodePhone(rawPhone),
+        seller_email: document.getElementById('fSellerEmail').value.trim()
+      };
+
+      const btn = document.querySelector('#addModal .btn-map-confirm') || document.querySelector('#addModal .btn-submit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+      if (editId) {
+        await supabaseClient.from('properties').update(prop).eq('id', editId);
+      } else {
+        await supabaseClient.from('properties').insert([prop]);
+      }
+
+      if (btn) { btn.disabled = false; btn.textContent = 'Save Property'; }
+      closeAddModal();
+      await initDashboard();
+    }
+
+    function renderInterests() {
+      const q = (document.getElementById('interestSearch').value || '').toLowerCase();
+      let interests = cachedInterests;
+      if (q) interests = interests.filter(i => (i.buyer_name + i.buyer_phone + (i.property_label || '')).toLowerCase().includes(q));
+      const bc = s => s === 'new' ? 'badge-new' : s === 'contacted' ? 'badge-contacted' : 'badge-closed';
+      const bl = s => s === 'new' ? '🆕 New' : s === 'contacted' ? '✅ Contacted' : '🔒 Closed';
+      const rows = interests.map((i) => `<tr>
+    <td data-label="Buyer"><strong>${i.buyer_name}</strong></td>
+    <td data-label="Phone"><a href="tel:${i.buyer_phone}" style="color:var(--purple)">${i.buyer_phone}</a></td>
+    <td data-label="Email">${i.buyer_email || '—'}</td>
+    <td data-label="Property" title="${i.property_label || ''}">${(i.property_label || '').slice(0, 22)}…</td>
+    <td data-label="Message" title="${i.message || ''}">${(i.message || '—').slice(0, 28)}${i.message && i.message.length > 28 ? '…' : ''}</td>
+    <td data-label="Date">${formatDate(i.created_at)}</td>
+    <td data-label="Status"><span class="status-badge ${bc(i.status || 'new')}">${bl(i.status || 'new')}</span></td>
+    <td data-label="Actions"><div class="action-btns">
+      ${(i.status || 'new') !== 'contacted' ? `<button class="btn-action btn-contact" onclick="contactBuyer('${i.id}')">📞 Contact</button>` : ''}
+      ${(i.status || 'new') !== 'closed' ? `<button class="btn-action btn-close-lead" onclick="closeLead('${i.id}')">Close</button>` : ''}
+      <button class="btn-action btn-delete" onclick="deleteInterest('${i.id}')">🗑</button>
+    </div></td>
+  </tr>`).join('');
+      document.getElementById('interestsTbody').innerHTML = rows || `<tr class="empty-row"><td colspan="8">No buyer interests yet.</td></tr>`;
+    }
+
+    async function contactBuyer(id) {
+      const i = cachedInterests.find(x => x.id === id); if (!i) return;
+      const msg = `Hi ${i.buyer_name}, I am from the OWMD team. You expressed interest in ${i.property_label}. Let me share more details.`;
+      window.open(`https://wa.me/91${i.buyer_phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+      await supabaseClient.from('buyer_interests').update({ status: 'contacted' }).eq('id', id);
+      await initDashboard();
+    }
+    async function closeLead(id) {
+      await supabaseClient.from('buyer_interests').update({ status: 'closed' }).eq('id', id);
+      await initDashboard();
+    }
+    async function deleteInterest(id) {
+      if (!confirm('Delete this buyer interest?')) return;
+      await supabaseClient.from('buyer_interests').delete().eq('id', id);
+      await initDashboard();
+    }
+
+    // Address Autocomplete shared (same as list-property.html)
+    var _addrTimer = null, _addrCoords = {};
+    function addrInput(input, dropId, linkId) {
+      clearTimeout(_addrTimer);
+      var q = input.value.trim(), drop = document.getElementById(dropId);
+      if (!drop) return;
+      if (q.length < 3) { drop.style.display = 'none'; return; }
+      drop.innerHTML = '<div class="addr-loading">Searching...</div>';
+      drop.style.display = 'block';
+      _addrTimer = setTimeout(function () { fetchAddrSugg(q, input, drop, linkId); }, 380);
+    }
+    function fetchAddrSugg(q, input, drop, linkId) {
+      var url = 'https://photon.komoot.io/api/?q=' + encodeURIComponent(q) + '&lat=28.6&lon=77.3&limit=6&lang=en';
+      fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+        if (!data.features || !data.features.length) { drop.innerHTML = '<div class="addr-loading">No results found.</div>'; return; }
+        drop.innerHTML = data.features.map(function (f) {
+          var p = f.properties;
+          var street = p.housenumber && p.street ? p.housenumber + ' ' + p.street : p.street || '';
+          var main = [p.name, street].filter(Boolean).join(', ') || p.city || p.district || '';
+          var sub = [p.district, p.city, p.state, p.postcode].filter(Boolean).join(', ');
+          var full = [p.name, street, p.district, p.city, p.state, p.postcode, 'India'].filter(Boolean).join(', ');
+          var lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0];
+          return '<div class="addr-item" data-full="' + encodeURIComponent(full) + '" data-lat="' + lat + '" data-lon="' + lon + '" data-input="' + input.id + '" data-link="' + linkId + '" data-drop="' + drop.id + '" onmousedown="pickAddr(this)">'
+            + '<span class="addr-item-pin">📍</span>'
+            + '<div><div class="addr-item-main">' + main + '</div><div class="addr-item-sub">' + sub + '</div></div></div>';
+        }).join('');
+      }).catch(function () { drop.innerHTML = '<div class="addr-loading">Error. Type address manually.</div>'; });
+    }
+    function pickAddr(el) {
+      var full = decodeURIComponent(el.dataset.full);
+      var lat = parseFloat(el.dataset.lat), lon = parseFloat(el.dataset.lon);
+      var input = document.getElementById(el.dataset.input);
+      var drop = document.getElementById(el.dataset.drop);
+      var link = document.getElementById(el.dataset.link);
+      if (input) input.value = full;
+      if (drop) drop.style.display = 'none';
+      if (link) { link.href = 'https://maps.google.com/?q=' + lat + ',' + lon; link.style.display = 'inline-block'; }
+      if (input) _addrCoords[input.id] = { lat: lat, lon: lon };
+    }
+    document.addEventListener('click', function (e) {
+      document.querySelectorAll('.addr-suggestions').forEach(function (d) {
+        var prev = d.parentElement && d.parentElement.querySelector('input');
+        if (prev && !prev.contains(e.target) && !d.contains(e.target)) d.style.display = 'none';
+      });
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('addModal').addEventListener('click', e => { if (e.target.id === 'addModal') closeAddModal() });
+    document.getElementById('mapPickerModal').addEventListener('click', e => { if (e.target.id === 'mapPickerModal') closeMapPicker() });
+
+    // ── Leaflet Map Picker logic ──────────
+    let pickerMap = null, pickerMarker = null, pickedCoords = null, pickedAddress = "", targetInputId = "", targetLinkId = "";
+
+    function openMapPicker(inputId, linkId) {
+      targetInputId = inputId; targetLinkId = linkId;
+      document.getElementById('mapPickerModal').classList.add('active');
+      document.getElementById('btnConfirmMap').disabled = true;
+      document.getElementById('mapPickedAddrText').textContent = "Click on the map to drop a pin";
+      pickedCoords = null; pickedAddress = "";
+
+      if (!pickerMap) {
+        // Initial NCR bias
+        pickerMap = L.map('mapPickerDiv').setView([28.6, 77.3], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19, attribution: '© OpenStreetMap'
+        }).addTo(pickerMap);
+
+        pickerMap.on('click', function (e) {
+          const lat = e.latlng.lat, lon = e.latlng.lng;
+          if (pickerMarker) pickerMarker.setLatLng([lat, lon]);
+          else pickerMarker = L.marker([lat, lon]).addTo(pickerMap);
+
+          pickedCoords = { lat, lon };
+          document.getElementById('mapLoadingOverlay').style.display = 'flex';
+
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+            .then(r => r.json()).then(data => {
+              document.getElementById('mapLoadingOverlay').style.display = 'none';
+              if (data && data.display_name) {
+                pickedAddress = data.display_name;
+                document.getElementById('mapPickedAddrText').textContent = pickedAddress;
+                document.getElementById('btnConfirmMap').disabled = false;
+              } else {
+                document.getElementById('mapPickedAddrText').textContent = "Unknown location. Please try again.";
+                document.getElementById('btnConfirmMap').disabled = true;
+              }
+            }).catch(() => {
+              document.getElementById('mapLoadingOverlay').style.display = 'none';
+              document.getElementById('mapPickedAddrText').textContent = "Error fetching address. Try again.";
+              document.getElementById('btnConfirmMap').disabled = true;
+            });
+        });
+      } else {
+        setTimeout(() => pickerMap.invalidateSize(), 100);
+      }
+    }
+
+    function closeMapPicker() {
+      document.getElementById('mapPickerModal').classList.remove('active');
+    }
+
+    function confirmMapPick() {
+      if (pickedAddress && pickedCoords) {
+        const inp = document.getElementById(targetInputId);
+        const link = document.getElementById(targetLinkId);
+        if (inp) {
+          inp.value = pickedAddress;
+          _addrCoords[targetInputId] = pickedCoords;
+        }
+        if (link) {
+          link.href = `https://maps.google.com/?q=${pickedCoords.lat},${pickedCoords.lon}`;
+          link.style.display = 'inline-block';
+        }
+        closeMapPicker();
+      }
+    }
+
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const { data } = await supabaseClient.auth.getSession();
+      if (data && data.session) {
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('dashboard').classList.add('active');
+        initDashboard();
+      }
+    });
+  </script>
+</body>
+
+</html>

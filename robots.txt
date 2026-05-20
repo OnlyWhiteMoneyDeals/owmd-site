@@ -1,0 +1,12 @@
+# robots.txt for onlywhitemoneydeals.com
+# Optimized for Google, Yahoo, Bing, and other search engines
+
+User-agent: *
+Allow: /
+
+# Exclude private admin portals
+Disallow: /admin.html
+Disallow: /owmd-team-portal.html
+
+# Link to sitemap
+Sitemap: https://onlywhitemoneydeals.com/sitemap.xml
