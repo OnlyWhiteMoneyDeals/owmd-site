@@ -62,15 +62,20 @@ owmd-site/
 ├── faq.html                # FAQ page
 ├── admin.html              # Admin panel
 ├── owmd-team-portal.html   # Team portal
-├── style.css               # Main stylesheet (source)
-├── style.min.css           # Minified stylesheet (production)
-├── script.js               # Main JS (source)
-├── script.min.js           # Minified JS (production)
-├── loader.js               # Page loader utility
+├── css/
+│   ├── style.css           # Main stylesheet (source)
+│   └── style.min.css       # Minified stylesheet (production)
+├── js/
+│   ├── loader.js           # Dynamic component loader (source)
+│   ├── loader.min.js       # Production minified loader (New!)
+│   ├── script.js           # Main JS (source)
+│   └── script.min.js       # Minified JS (production)
+├── scripts/
+│   ├── minify_assets.py    # Build script to compile/minify CSS/JS
+│   └── used_classes.txt    # CSS selector definitions
 ├── sitemap.xml             # XML sitemap
 ├── robots.txt              # Search engine directives
 ├── _headers                # HTTP response headers (Cloudflare/Netlify)
-├── minify_assets.py        # Build script to minify CSS/JS
 ├── partials/
 │   ├── navbar.html         # Shared navigation bar
 │   └── footer.html         # Shared footer
@@ -108,10 +113,10 @@ Then open [http://localhost:8080](http://localhost:8080) in your browser.
 CSS and JS minification is handled by the included Python script:
 
 ```bash
-python3 minify_assets.py
+python3 scripts/minify_assets.py
 ```
 
-This generates `style.min.css` and `script.min.js` from their source files.
+This compiles `css/style.css` and `js/loader.js` (along with `js/script.js`) into optimized minified files.
 
 ---
 
