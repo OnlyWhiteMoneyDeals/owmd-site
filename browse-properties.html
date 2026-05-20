@@ -193,6 +193,21 @@ a{text-decoration:none;color:inherit}ul{list-style:none}
       <a href="list-property.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#10B981,#059669);color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;font-size:0.85rem">+ List Your Property</a>
     </div>
     <div class="prop-grid" id="propGrid"></div>
+    <!-- Empty state: no properties in DB at all -->
+    <div id="emptyStateNoDb" style="display:none;text-align:center;padding:64px 24px 80px;">
+      <div style="font-size:3.8rem;margin-bottom:20px">🏗️</div>
+      <span style="display:inline-block;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);background:var(--purple-bg);padding:5px 14px;border-radius:50px;margin-bottom:18px">Coming Soon</span>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2rem);color:var(--text);margin-bottom:14px;line-height:1.3">Properties Loading Soon…</h2>
+      <p style="color:var(--muted);font-size:0.95rem;line-height:1.8;max-width:560px;margin:0 auto 32px">
+        List today to be among the <strong style="color:var(--text)">initial sellers</strong> and join us in this revolutionary journey of pure white money deals —
+        or showcase your interest to buy in pure white money and we will reach out to you as soon as we find your perfect match.
+      </p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="list-property.html" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.92rem;text-decoration:none;box-shadow:0 4px 16px rgba(107,31,168,0.3);transition:all 0.3s">🏠 List My Property</a>
+        <a href="https://wa.me/919910805491?text=Hi%20OWMD%2C%20I%20want%20to%20buy%20a%20property%20in%20pure%20white%20money.%20Please%20reach%20out%20when%20you%20find%20a%20match." target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.92rem;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,0.3);transition:all 0.3s">💬 I Want to Buy</a>
+      </div>
+    </div>
+    <!-- Empty state: filters returned no results -->
     <div class="empty-state" id="emptyState" style="display:none">
       <div class="empty-icon">&#127960;&#65039;</div>
       <h3>No properties found</h3>
@@ -337,11 +352,26 @@ function resetFilters(){
 function renderGrid(list){
   const grid=document.getElementById('propGrid');
   const empty=document.getElementById('emptyState');
+  const emptyNoDb=document.getElementById('emptyStateNoDb');
   const count=document.getElementById('listingsCount');
-  if(!list.length){grid.innerHTML='';empty.style.display='block';}
-  else{empty.style.display='none';grid.innerHTML=list.map(renderCard).join('');}
-  const vis=list.filter(l=>l.status==='verified').length;
-  count.innerHTML='<strong>'+list.length+'</strong> propert'+(list.length===1?'y':'ies')+' found'+(vis<list.length?' ('+vis+' available)':'');
+  // Hide all states first
+  grid.innerHTML='';
+  empty.style.display='none';
+  emptyNoDb.style.display='none';
+  if(!list.length){
+    // Check if DB itself has no verified/sold listings at all
+    if(!allVerifiedListings.length){
+      emptyNoDb.style.display='block';
+      count.innerHTML='<strong>0</strong> properties found';
+    } else {
+      empty.style.display='block';
+      count.innerHTML='<strong>0</strong> properties found';
+    }
+  } else {
+    grid.innerHTML=list.map(renderCard).join('');
+    const vis=list.filter(l=>l.status==='verified').length;
+    count.innerHTML='<strong>'+list.length+'</strong> propert'+(list.length===1?'y':'ies')+' found'+(vis<list.length?' ('+vis+' available)':'');
+  }
 }
 
 function buildCarouselMedia(p,cb){
