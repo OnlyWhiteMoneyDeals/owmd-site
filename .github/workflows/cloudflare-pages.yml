@@ -29,19 +29,28 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler@latest
 
-      - name: Verify token and project
-        run: |
-          echo "Account ID: $CLOUDFLARE_ACCOUNT_ID"
-          wrangler pages project list
+      - name: List Pages projects (find exact name)
+        run: wrangler pages project list
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+      - name: Remove stray wrangler config files
+        run: |
+          rm -f wrangler.jsonc wrangler.json wrangler.toml
+          echo "Cleaned wrangler config files"
+          ls -la
+
       - name: Deploy to Cloudflare Pages
         id: deploy
         run: |
+          PROJECT_NAME=$(wrangler pages project list 2>/dev/null | grep -oP '(?<=│ )\S+(?= +│)' | grep -v 'Name\|──' | head -1)
+          echo "Detected project name: $PROJECT_NAME"
+          if [ -z "$PROJECT_NAME" ]; then
+            PROJECT_NAME="owmd-site"
+          fi
           wrangler pages deploy . \
-            --project-name=owmd-site \
+            --project-name="$PROJECT_NAME" \
             --branch=${{ github.head_ref || 'main' }} \
             --commit-dirty=true
         env:
