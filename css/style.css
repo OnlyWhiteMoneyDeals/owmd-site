@@ -2545,6 +2545,13 @@ h4 {
   transform: translateX(5px);
 }
 
+.social-side-btn.ig:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  color: #fff;
+  border-color: #d6249f;
+  transform: translateX(5px);
+}
+
 .side-tooltip {
   position: absolute;
   left: 65px;

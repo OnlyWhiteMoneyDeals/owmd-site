@@ -9,7 +9,8 @@
     content="List your property on OWMD for 100% white money deals. Flats, plots, shops, offices in Indirapuram, Vasundhara, Kaushambi, Noida & Greater Noida.">
   <link rel="canonical" href="https://onlywhitemoneydeals.com/list-property.html">
   <meta property="og:title" content="List Your Property | Only White Money Deals">
-  <meta property="og:description" content="List your property for 100% white money sale in Indirapuram, Vasundhara, Kaushambi, Noida & Greater Noida. MRICS-certified broker. Zero black money deals.">
+  <meta property="og:description"
+    content="List your property for 100% white money sale in Indirapuram, Vasundhara, Kaushambi, Noida & Greater Noida. MRICS-certified broker. Zero black money deals.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://onlywhitemoneydeals.com/list-property.html">
   <meta property="og:image" content="https://onlywhitemoneydeals.com/assets/logo1.png">
@@ -737,7 +738,6 @@
       display: grid;
       grid-template-columns: 1.5fr 1fr 1fr;
       gap: 48px;
-      margin-bottom: 48px
     }
 
     .footer-brand p {
@@ -1224,7 +1224,7 @@
         if (!file.type.startsWith('image/')) { alert('Only image files are allowed.'); return; }
         if (file.size > 15 * 1024 * 1024) { alert('Each photo must be under 15MB.'); return; }
         compressImage(file, function (compressedBlob) {
-          uploadedPhotos.push({blob: compressedBlob, url: URL.createObjectURL(compressedBlob)});
+          uploadedPhotos.push({ blob: compressedBlob, url: URL.createObjectURL(compressedBlob) });
           renderPreviews();
         });
       });
@@ -1232,7 +1232,7 @@
     }
 
     function removePhoto(idx) {
-      if(uploadedPhotos[idx].url) URL.revokeObjectURL(uploadedPhotos[idx].url);
+      if (uploadedPhotos[idx].url) URL.revokeObjectURL(uploadedPhotos[idx].url);
       uploadedPhotos.splice(idx, 1);
       renderPreviews();
     }
@@ -1469,19 +1469,19 @@
         try {
           const photoUrls = [];
           for (let i = 0; i < uploadedPhotos.length; i++) {
-             const fName = `public/photo-${Date.now()}-${i}.jpg`;
-             const {data, error} = await supabaseClient.storage.from('property-media').upload(fName, uploadedPhotos[i].blob);
-             if (error) throw error;
-             const pUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
-             photoUrls.push(pUrl);
+            const fName = `public/photo-${Date.now()}-${i}.jpg`;
+            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedPhotos[i].blob);
+            if (error) throw error;
+            const pUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
+            photoUrls.push(pUrl);
           }
 
           let vidUrl = null;
           if (uploadedVideoBlob) {
-             const fName = `public/video-${Date.now()}.${uploadedVideoBlob.name.split('.').pop() || 'mp4'}`;
-             const {data, error} = await supabaseClient.storage.from('property-media').upload(fName, uploadedVideoBlob);
-             if (error) throw error;
-             vidUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
+            const fName = `public/video-${Date.now()}.${uploadedVideoBlob.name.split('.').pop() || 'mp4'}`;
+            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedVideoBlob);
+            if (error) throw error;
+            vidUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
           }
 
           btn.textContent = 'Saving Listing...';
@@ -1491,12 +1491,12 @@
             status: 'pending', photos: photoUrls, video_url: vidUrl
           };
 
-          const {error: dbErr} = await supabaseClient.from('properties').insert([listing]);
-          if(dbErr) throw dbErr;
+          const { error: dbErr } = await supabaseClient.from('properties').insert([listing]);
+          if (dbErr) throw dbErr;
 
           const formatPrice = p => p >= 10000000 ? '\u20B9' + (p / 10000000).toFixed(2) + ' Cr' : p >= 100000 ? '\u20B9' + (p / 100000).toFixed(1) + ' L' : '\u20B9' + p.toLocaleString('en-IN');
           const waMsg = 'Hi OWMD, I have submitted a property listing for verification.%0A%0AType: ' + encodeURIComponent(type) + '%0ALocation: ' + encodeURIComponent(location) + '%0AAddress: ' + encodeURIComponent(address) + '%0APrice: ' + encodeURIComponent(formatPrice(price)) + '%0ASize: ' + size + ' sqft' + (bedrooms > 0 ? '%0ABedrooms: ' + bedrooms + ' BHK' : '') + '%0ASeller: ' + encodeURIComponent(sellerName) + '%0APhone: ' + encodeURIComponent(sellerPhone) + '%0A%0APlease verify and list this property.';
-          
+
           setTimeout(() => {
             document.getElementById('waProceedBtn').href = `https://wa.me/919910805491?text=${waMsg}`;
             document.getElementById('formCard').style.display = 'none';
