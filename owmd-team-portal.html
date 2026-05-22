@@ -984,6 +984,136 @@
       background: #000
     }
 
+    /* IMAGE MANAGER */
+    .img-manager-section {
+      margin-top: 4px
+    }
+
+    .img-manager-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      display: block
+    }
+
+    .img-thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      min-height: 0
+    }
+
+    .img-thumb-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      aspect-ratio: 4/3;
+      background: #f3f4f6
+    }
+
+    .img-thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .img-thumb-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(220, 38, 38, 0.9);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 0.7rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      backdrop-filter: blur(2px)
+    }
+
+    .img-thumb-remove:hover {
+      background: #DC2626;
+      transform: scale(1.1)
+    }
+
+    .img-thumb-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1.5px dashed var(--border)
+    }
+
+    .img-add-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch
+    }
+
+    .img-add-row input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: var(--transition)
+    }
+
+    .img-add-row input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(107,31,168,0.1)
+    }
+
+    .btn-img-add {
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: var(--transition)
+    }
+
+    .btn-img-add:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(107,31,168,0.3)
+    }
+
+    .img-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--purple-bg);
+      color: var(--purple);
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 6px
+    }
+
     @media(max-width:700px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1255,6 +1385,21 @@
             style="display:none;font-size:0.75rem;color:var(--purple);margin-top:5px;font-weight:700">&#128205; Preview
             on Google Maps</a>
         </div>
+
+        <!-- IMAGE MANAGER -->
+        <div class="img-manager-section form-group" style="margin-bottom:0">
+          <label class="img-manager-label">
+            📷 Property Images
+            <span class="img-count-badge" id="imgCountBadge">0 photos</span>
+          </label>
+          <div class="img-thumb-grid" id="imgThumbGrid">
+            <div class="img-thumb-empty">No images added yet</div>
+          </div>
+          <div class="img-add-row">
+            <input type="text" id="fImgUrl" placeholder="Paste image URL and click Add…" autocomplete="off">
+            <button type="button" class="btn-img-add" onclick="addImageUrl()">＋ Add Image</button>
+          </div>
+        </div>
       </div>
       <div class="modal-footer-btns">
         <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
@@ -1424,6 +1569,43 @@
       window.open('https://wa.me/91' + phone.replace(/\D/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
     }
 
+    // IMAGE MANAGER STATE
+    let _editPhotos = [];
+
+    function renderImgThumbs() {
+      const grid = document.getElementById('imgThumbGrid');
+      const badge = document.getElementById('imgCountBadge');
+      if (!grid) return;
+      badge.textContent = _editPhotos.length + ' photo' + (_editPhotos.length !== 1 ? 's' : '');
+      if (_editPhotos.length === 0) {
+        grid.innerHTML = '<div class="img-thumb-empty">No images added yet</div>';
+        return;
+      }
+      grid.innerHTML = _editPhotos.map((url, idx) => `
+        <div class="img-thumb-item">
+          <img src="${url}" alt="Photo ${idx+1}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'75\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23f3f4f6\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%239ca3af\' font-size=\'11\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E❌ Error%3C/text%3E%3C/svg%3E'">
+          <button class="img-thumb-remove" onclick="removeImageAt(${idx})" title="Remove image">✕</button>
+        </div>`).join('');
+    }
+
+    function addImageUrl() {
+      const inp = document.getElementById('fImgUrl');
+      const url = (inp.value || '').trim();
+      if (!url) { inp.focus(); return; }
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        alert('Please enter a valid image URL starting with http:// or https://'); return;
+      }
+      _editPhotos.push(url);
+      inp.value = '';
+      renderImgThumbs();
+      inp.focus();
+    }
+
+    function removeImageAt(idx) {
+      _editPhotos.splice(idx, 1);
+      renderImgThumbs();
+    }
+
     // ADD / EDIT MODAL
     function openAddModal() {
       document.getElementById('modalTitle').textContent = 'Add New Property';
@@ -1433,6 +1615,8 @@
       document.getElementById('fSize').value = '';
       document.getElementById('fBedrooms').value = '0';
       document.getElementById('fStatus').value = 'pending';
+      _editPhotos = [];
+      renderImgThumbs();
       document.getElementById('addModal').classList.add('active');
     }
 
@@ -1454,6 +1638,9 @@
       document.getElementById('fSellerEmail').value = l.seller_email || '';
       const addrEl = document.getElementById('fAddress');
       if (addrEl) addrEl.value = l.address || '';
+      _editPhotos = Array.isArray(l.photos) ? [...l.photos] : [];
+      renderImgThumbs();
+      document.getElementById('fImgUrl').value = '';
       document.getElementById('addModal').classList.add('active');
     }
 
@@ -1516,11 +1703,12 @@
         address: addrEl ? addrEl.value.trim() : '',
         seller_name: document.getElementById('fSellerName').value.trim(),
         seller_phone: encodePhone(rawPhone),
-        seller_email: document.getElementById('fSellerEmail').value.trim()
+        seller_email: document.getElementById('fSellerEmail').value.trim(),
+        photos: [..._editPhotos]
       };
 
-      const btn = document.querySelector('#addModal .btn-map-confirm') || document.querySelector('#addModal .btn-submit');
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      const saveBtn = document.querySelector('#addModal .btn-save');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
 
       if (editId) {
         await supabaseClient.from('properties').update(prop).eq('id', editId);
@@ -1528,7 +1716,7 @@
         await supabaseClient.from('properties').insert([prop]);
       }
 
-      if (btn) { btn.disabled = false; btn.textContent = 'Save Property'; }
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Property'; }
       closeAddModal();
       await initDashboard();
     }
