@@ -1,26 +1,10 @@
 # robots.txt for onlywhitemoneydeals.com
 # Last updated: 2026-05-25
-# Optimized for Google, Bing, Yahoo, and other search engines
 
-# ── Global rules ──────────────────────────────────────────
+# All crawlers: allow everything except private portals
 User-agent: *
-
-# Public pages — allow indexing
-Allow: /
-Allow: /index.html
-Allow: /browse-properties.html
-Allow: /list-property.html
-Allow: /benefits.html
-Allow: /faq.html
-
-# Assets — allow crawling for image/rich results
-Allow: /assets/
-Allow: /css/
-Allow: /js/
-
-# ── Private / admin pages — block indexing ────────────────
 Disallow: /admin.html
 Disallow: /owmd-team-portal.html
 
-# ── Sitemap location ──────────────────────────────────────
+# Sitemap
 Sitemap: https://onlywhitemoneydeals.com/sitemap.xml
