@@ -1691,9 +1691,17 @@ h4 {
 }
 
 .footer-social a:hover {
-  background: var(--purple-light);
   transform: translateY(-3px);
 }
+
+/* Brand-specific hover colors for footer social icons */
+.footer-social a:nth-child(1):hover { background: #25D366; } /* WhatsApp */
+.footer-social a:nth-child(2):hover { background: #1877F2; } /* Facebook  */
+.footer-social a:nth-child(3):hover { background: #0077B5; } /* LinkedIn  */
+.footer-social a:nth-child(4):hover {                        /* Instagram */
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+
 
 .footer-social a svg {
   width: 20px;
