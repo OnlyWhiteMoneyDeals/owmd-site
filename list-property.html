@@ -1161,6 +1161,7 @@
                   <option value="">Select Type</option>
                   <option>Flat</option>
                   <option>Builder Floor</option>
+                  <option>Builder Flat</option>
                   <option>Plot</option>
                   <option>Shop</option>
                   <option>Office</option>
@@ -1567,7 +1568,7 @@
 
     function toggleBedrooms() {
       const type = document.getElementById('propType').value;
-      const residential = ['Flat', 'Builder Floor'];
+      const residential = ['Flat', 'Builder Floor', 'Builder Flat'];
       const group = document.getElementById('bedroomsGroup');
       if (group) group.classList.toggle('hidden', !residential.includes(type));
     }

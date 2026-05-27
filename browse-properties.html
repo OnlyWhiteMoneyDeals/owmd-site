@@ -1180,10 +1180,11 @@
           <option value="">All Types</option>
           <option>Flat</option>
           <option>Builder Floor</option>
+          <option>Builder Flat</option>
           <option>Plot</option>
           <option>Shop</option>
           <option>Office</option>
-          <option>Warehouse</option>
+          <option>Industry</option>
         </select>
       </div>
       <div class="filter-group"><label>Min Budget</label>
@@ -1351,13 +1352,13 @@
     }
 
     function getCategoryClass(type) {
-      if (['Flat', 'Builder Floor', 'Plot'].includes(type)) return '';
+      if (['Flat', 'Builder Floor', 'Builder Flat', 'Plot'].includes(type)) return '';
       if (['Shop', 'Office'].includes(type)) return 'commercial';
       return 'industrial';
     }
 
     function getPropEmoji(type) {
-      return { Flat: '\uD83C\uDFE2', 'Builder Floor': '\uD83C\uDFE0', Plot: '\uD83C\uDF33', Shop: '\uD83D\uDED2', Office: '\uD83D\uDCBC', Warehouse: '\uD83C\uDFED' }[type] || '\uD83C\uDFD8\uFE0F';
+      return { Flat: '\uD83C\uDFE2', 'Builder Floor': '\uD83C\uDFE0', 'Builder Flat': '\uD83C\uDFE0', Plot: '\uD83C\uDF33', Shop: '\uD83D\uDED2', Office: '\uD83D\uDCBC', Industry: '\uD83C\uDFED' }[type] || '\uD83C\uDFD8\uFE0F';
     }
 
     function renderCard(p) {
