@@ -640,6 +640,33 @@
       margin-top: 1px
     }
 
+    /* Map Layer Toggle */
+    .map-layer-toggle {
+      display: flex;
+      gap: 2px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 8px;
+      padding: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0,0,0,0.1)
+    }
+    .mlt-btn {
+      background: none;
+      border: none;
+      padding: 4px 9px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #374151;
+      font-family: inherit;
+      transition: all 0.2s;
+      white-space: nowrap
+    }
+    .mlt-btn:hover { background: #F3F4F6 }
+    .mlt-btn.mlt-active { background: #6B1FA8; color: #fff; box-shadow: 0 2px 6px rgba(107,31,168,0.35) }
+
     .map-modal-header {
       padding: 16px 20px;
       border-bottom: 1px solid #E5E7EB;
@@ -1761,11 +1788,40 @@
       if (!pickerMap) {
         // Initial NCR bias
         pickerMap = L.map('mapPickerDiv').setView([28.6, 77.3], 11);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
-          maxZoom: 19
-        }).addTo(pickerMap);
+        const _pLayers = {
+          map: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd', maxZoom: 19
+          }),
+          satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community',
+            maxZoom: 19
+          }),
+          hybrid: L.layerGroup([
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community', maxZoom: 19
+            }),
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 19, opacity: 0.9
+            })
+          ])
+        };
+        _pLayers.map.addTo(pickerMap);
+        window._pickerLayers = _pLayers;
+
+        // Layer toggle
+        const pLayerCtrl = L.control({ position: 'topright' });
+        pLayerCtrl.onAdd = function () {
+          const div = L.DomUtil.create('div', 'map-layer-toggle');
+          div.innerHTML = `
+            <button class="mlt-btn mlt-active" onclick="switchPickerLayer('map',this)">&#128506; Map</button>
+            <button class="mlt-btn" onclick="switchPickerLayer('satellite',this)">&#128752; Satellite</button>
+            <button class="mlt-btn" onclick="switchPickerLayer('hybrid',this)">&#127758; Hybrid</button>
+          `;
+          L.DomEvent.disableClickPropagation(div);
+          return div;
+        };
+        pLayerCtrl.addTo(pickerMap);
 
         pickerMap.on('click', function (e) {
           const lat = e.latlng.lat, lon = e.latlng.lng;
@@ -1797,6 +1853,15 @@
         // Fix resize issue if map was hidden
         setTimeout(() => pickerMap.invalidateSize(), 100);
       }
+    }
+
+    function switchPickerLayer(name, btn) {
+      const ls = window._pickerLayers;
+      if (!pickerMap || !ls) return;
+      Object.values(ls).forEach(l => pickerMap.removeLayer(l));
+      ls[name].addTo(pickerMap);
+      document.querySelectorAll('.map-layer-toggle .mlt-btn').forEach(b => b.classList.remove('mlt-active'));
+      btn.classList.add('mlt-active');
     }
 
     function closeMapPicker() {
