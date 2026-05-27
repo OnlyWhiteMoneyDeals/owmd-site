@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="css/style.min.css">
   </noscript>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="icon" type="image/png" href="assets/logo1.png">
   <style>
     :root {
@@ -677,6 +679,61 @@
       overflow-y: auto
     }
 
+    .prop-map-section {
+      margin-bottom: 20px
+    }
+
+    .prop-map-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .prop-map-label span {
+      background: var(--purple-bg);
+      color: var(--purple);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.68rem
+    }
+
+    #detailMapEl {
+      width: 100%;
+      height: 200px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid #E5E7EB;
+      background: #f3f4f6
+    }
+
+    .btn-open-map {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #F0F9FF;
+      color: #0369A1;
+      border: 1.5px solid #BAE6FD;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: var(--transition);
+      white-space: nowrap
+    }
+
+    .btn-open-map:hover {
+      background: #0369A1;
+      color: #fff;
+      border-color: #0369A1
+    }
+
     .modal-main-placeholder {
       width: 100%;
       height: 260px;
@@ -1223,8 +1280,10 @@
           onclick="closeModal('detailModal')">&#10005;</button>
       </div>
       <div class="modal-body" id="detailBody"></div>
-      <div class="modal-footer"><button class="btn-interest" onclick="openInterestModal()" style="flex:1">&#128172;
-          Express Interest</button></div>
+      <div class="modal-footer">
+        <a href="#" id="detailMapLink" class="btn-open-map" target="_blank" rel="noopener">&#127759; Open in Maps</a>
+        <button class="btn-interest" onclick="openInterestModal()" style="flex:1">&#128172; Express Interest</button>
+      </div>
     </div>
   </div>
   <div class="modal-overlay interest-modal" id="interestModal">
@@ -1266,6 +1325,18 @@
 
     let currentProperty = null;
     let allVerifiedListings = [];
+
+    // Predefined NCR area coordinates (neighbourhood-level, not exact address)
+    const NCR_COORDS = {
+      'Indirapuram':  { lat: 28.6406, lon: 77.3528, zoom: 14 },
+      'Vasundhara':   { lat: 28.6607, lon: 77.3488, zoom: 14 },
+      'Kaushambi':    { lat: 28.6375, lon: 77.3101, zoom: 14 },
+      'Noida':        { lat: 28.5355, lon: 77.3910, zoom: 13 },
+      'Greater Noida':{ lat: 28.4744, lon: 77.5040, zoom: 13 },
+      'Others':       { lat: 28.6139, lon: 77.2090, zoom: 12 }
+    };
+
+    let detailMap = null, detailMarker = null;
 
     async function fetchListings() {
       const { data, error } = await supabaseClient.from('properties').select('*').in('status', ['verified', 'sold']);
@@ -1327,7 +1398,18 @@
 
       const all = allVerifiedListings;
       filtered = all.filter(l => {
-        if (loc && l.location !== loc) return false;
+        if (loc) {
+          const lLoc = (l.location || '').toLowerCase();
+          const fLoc = loc.toLowerCase();
+          let locMatch;
+          if (loc === 'Noida') {
+            // Match Noida sectors but NOT Greater Noida
+            locMatch = lLoc.includes('noida') && !lLoc.includes('greater noida');
+          } else {
+            locMatch = lLoc.includes(fLoc);
+          }
+          if (!locMatch) return false;
+        }
         if (type && l.type !== type) return false;
         if (l.price < budgetMin || l.price > budgetMax) return false;
         if (bhk) {
@@ -1446,6 +1528,10 @@
       document.getElementById('detailTitle').textContent = p.type + ' in ' + p.location;
       document.getElementById('detailModal').classList.add('active');
       const bedroomsRow = p.bedrooms > 0 ? '<div class="modal-detail"><label>Bedrooms</label><span>' + p.bedrooms + ' BHK</span></div>' : '';
+      const hasExactCoords = !!(p.lat && p.lon);
+      const mapSectionLabel = hasExactCoords
+        ? '&#127759; Location <span style="background:#DCFCE7;color:#059669">&#10003; Exact</span>'
+        : '&#127759; Neighbourhood Map <span>Approximate area only</span>';
       const infoHTML = '<div class="modal-details-grid">'
         + '<div class="modal-detail"><label>Type</label><span>' + p.type + '</span></div>'
         + '<div class="modal-detail"><label>Location</label><span>' + p.location + '</span></div>'
@@ -1453,14 +1539,61 @@
         + '<div class="modal-detail"><label>Size</label><span>' + p.size.toLocaleString() + ' sqft</span></div>'
         + bedroomsRow + '</div>'
         + '<div class="modal-description"><strong>Description</strong><br><br>' + (p.description || 'No description provided.') + '</div>'
-        + '<div class="modal-contact-note">&#128274; Contact via OWMD only &#8212; Seller details kept confidential. Express interest below.</div>';
+        + '<div class="modal-contact-note">&#128274; Contact via OWMD only &#8212; Seller details kept confidential. Express interest below.</div>'
+        + '<div class="prop-map-section"><div class="prop-map-label">' + mapSectionLabel + '</div><div id="detailMapEl"></div></div>';
       buildCarouselMedia(p, function (items) {
         carouselMedia = items; carouselIdx = 0;
         document.getElementById('detailBody').innerHTML = renderCarouselHTML(items, 0) + infoHTML;
+        // Use exact coords if seller provided them, otherwise fall back to area centre
+        const hasExact = p.lat && p.lon;
+        const coords = hasExact
+          ? { lat: p.lat, lon: p.lon, zoom: 16 }
+          : (NCR_COORDS[p.location] || NCR_COORDS['Others']);
+        const mapLink = document.getElementById('detailMapLink');
+        if (mapLink) {
+          mapLink.href = 'https://www.openstreetmap.org/?mlat=' + coords.lat + '&mlon=' + coords.lon + '#map=' + coords.zoom + '/' + coords.lat + '/' + coords.lon;
+        }
+        // Small delay to ensure DOM is ready
+        setTimeout(function () {
+          const mapEl = document.getElementById('detailMapEl');
+          if (!mapEl) return;
+          if (detailMap) {
+            detailMap.remove();
+            detailMap = null;
+            detailMarker = null;
+          }
+          detailMap = L.map('detailMapEl', { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+          detailMap.setView([coords.lat, coords.lon], coords.zoom);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(detailMap);
+          // Custom purple marker
+          const purpleIcon = L.divIcon({
+            html: '<div style="width:28px;height:28px;background:linear-gradient(135deg,#6B1FA8,#8B5CF6);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 12px rgba(107,31,168,0.5)"></div>',
+            className: '',
+            iconSize: [28, 28],
+            iconAnchor: [14, 28]
+          });
+          detailMarker = L.marker([coords.lat, coords.lon], { icon: purpleIcon }).addTo(detailMap);
+          const popupText = hasExact
+            ? '<strong>' + p.location + '</strong><br><span style="font-size:0.75rem;color:#059669">&#10003; Exact property location</span>'
+            : '<strong>' + p.location + '</strong><br><span style="font-size:0.75rem;color:#6B7280">Approximate area shown</span>';
+          detailMarker.bindPopup(popupText, { closeButton: false }).openPopup();
+        }, 80);
       });
     }
 
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      // Destroy map when modal closes to prevent ghost tiles
+      if (id === 'detailModal' && detailMap) {
+        detailMap.remove();
+        detailMap = null;
+        detailMarker = null;
+      }
+    }
 
     function openInterestModal() {
       document.getElementById('detailModal').classList.remove('active');

@@ -551,6 +551,95 @@
       flex-direction: column
     }
 
+    /* Map Search Bar */
+    .map-search-bar {
+      padding: 10px 14px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-color, #E5E7EB);
+      position: relative
+    }
+
+    .map-search-icon {
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+      color: var(--muted)
+    }
+
+    .map-search-bar input {
+      width: 100%;
+      border: 1.5px solid var(--border-color, #E5E7EB);
+      border-radius: 8px;
+      padding: 9px 12px 9px 34px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: border-color 0.2s;
+      background: #FAFAFA
+    }
+
+    .map-search-bar input:focus {
+      outline: none;
+      border-color: var(--purple);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(107,31,168,0.1)
+    }
+
+    .map-search-drop {
+      display: none;
+      position: absolute;
+      top: calc(100% - 2px);
+      left: 14px;
+      right: 14px;
+      background: #fff;
+      border: 1.5px solid var(--purple);
+      border-radius: 0 0 10px 10px;
+      z-index: 10000;
+      max-height: 220px;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(107,31,168,0.15);
+      scrollbar-width: thin
+    }
+
+    .map-search-drop.open {
+      display: block
+    }
+
+    .map-search-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F3F4F6;
+      font-size: 0.84rem;
+      transition: background 0.15s
+    }
+
+    .map-search-item:last-child {
+      border-bottom: none
+    }
+
+    .map-search-item:hover,
+    .map-search-item.msi-focused {
+      background: var(--purple-bg);
+      color: var(--purple)
+    }
+
+    .map-search-item-main {
+      font-weight: 600;
+      line-height: 1.3
+    }
+
+    .map-search-item-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
     .map-modal-header {
       padding: 16px 20px;
       border-bottom: 1px solid #E5E7EB;
@@ -932,6 +1021,84 @@
       display: block
     }
 
+    /* Location Searchable Picker */
+    .loc-drop {
+      display: none;
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid var(--purple);
+      border-radius: 10px;
+      z-index: 600;
+      max-height: 280px;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(107,31,168,0.18);
+      scrollbar-width: thin
+    }
+
+    .loc-drop.open {
+      display: block
+    }
+
+    .loc-group {
+      padding: 6px 14px 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--purple);
+      background: var(--purple-bg);
+      border-bottom: 1px solid #EDE9FE;
+      position: sticky;
+      top: 0
+    }
+
+    .loc-item {
+      padding: 9px 14px;
+      font-size: 0.86rem;
+      color: var(--text);
+      cursor: pointer;
+      border-bottom: 1px solid #F3F4F6;
+      transition: background 0.15s
+    }
+
+    .loc-item:last-child {
+      border-bottom: none
+    }
+
+    .loc-item:hover,
+    .loc-item.loc-focused {
+      background: var(--purple-bg);
+      color: var(--purple)
+    }
+
+    .loc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--purple-bg);
+      color: var(--purple);
+      border: 1.5px solid var(--purple-light);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 6px
+    }
+
+    .loc-tag button {
+      background: none;
+      border: none;
+      color: var(--purple);
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+      padding: 0;
+      font-weight: 800
+    }
+
     @media(max-width:768px) {
       .nav-links {
         display: none
@@ -1000,17 +1167,17 @@
                   <option>Industry</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label>Location <span class="req">*</span></label>
-                <select id="propLocation" required>
-                  <option value="">Select Area</option>
-                  <option>Indirapuram</option>
-                  <option>Vasundhara</option>
-                  <option>Kaushambi</option>
-                  <option>Noida</option>
-                  <option>Greater Noida</option>
-                  <option>Others</option>
-                </select>
+              <div class="form-group" style="position:relative">
+                <label>Location / Area <span class="req">*</span></label>
+                <input type="text" id="propLocationSearch"
+                  placeholder="Type sector, locality, society area..."
+                  autocomplete="off"
+                  oninput="filterLocations(this.value)"
+                  onfocus="filterLocations(this.value)"
+                  onkeydown="locKeyNav(event)">
+                <div class="loc-drop" id="locDrop"></div>
+                <input type="hidden" id="propLocation">
+                <div id="locTag" style="display:none;margin-top:6px;display:none;align-items:center;gap:6px;font-size:0.8rem;font-weight:600;color:var(--purple)"></div>
               </div>
             </div>
             <div class="form-row">
@@ -1078,7 +1245,7 @@
                 onchange="handleVideo(this)">
               <div class="upload-icon">&#127909;</div>
               <div class="upload-text"><strong>Click to upload a video tour</strong><br>MP4, MOV, WEBM &middot; Max
-                200MB &middot; Audio will be muted for buyers</div>
+                50MB &middot; Audio will be muted for buyers</div>
             </div>
             <div class="video-preview-wrap" id="videoPreview" style="display:none">
               <video id="videoPreviewEl" muted controls playsinline></video>
@@ -1155,6 +1322,16 @@
         </div>
         <button class="map-modal-close" onclick="closeMapPicker()">&times;</button>
       </div>
+      <!-- Map Search Bar -->
+      <div class="map-search-bar" style="position:relative">
+        <span class="map-search-icon">&#128269;</span>
+        <input type="text" id="mapSearchInput"
+          placeholder="Search address, society, landmark..."
+          autocomplete="off"
+          oninput="mapSearchDebounce()"
+          onkeydown="mapSearchKeyNav(event)">
+        <div class="map-search-drop" id="mapSearchDrop"></div>
+      </div>
       <div class="map-modal-body" id="mapPickerDiv">
         <div class="map-loading-overlay" id="mapLoadingOverlay">Fetching address...</div>
       </div>
@@ -1176,6 +1353,217 @@
     const supabaseClient = window.supabase.createClient(_sUrl, _sKey);
 
     let uploadedPhotos = []; // array of {blob: Blob, url: string}
+
+    // ── Location Searchable Picker ──────────────────────────────
+    const NCR_AREAS = [
+      // ─── Ghaziabad Localities ───
+      { v: 'Indirapuram',           g: 'Ghaziabad' },
+      { v: 'Vasundhara',            g: 'Ghaziabad' },
+      { v: 'Kaushambi',             g: 'Ghaziabad' },
+      { v: 'Vaishali',              g: 'Ghaziabad' },
+      { v: 'Raj Nagar Extension',   g: 'Ghaziabad' },
+      { v: 'Crossing Republik',     g: 'Ghaziabad' },
+      { v: 'Siddharth Vihar',       g: 'Ghaziabad' },
+      { v: 'Mohan Nagar',           g: 'Ghaziabad' },
+      { v: 'Pratap Vihar',          g: 'Ghaziabad' },
+      { v: 'Vijay Nagar',           g: 'Ghaziabad' },
+      { v: 'Sahibabad',             g: 'Ghaziabad' },
+      { v: 'Govindpuram',           g: 'Ghaziabad' },
+      { v: 'Shastri Nagar',         g: 'Ghaziabad' },
+      { v: 'Gandhi Nagar',          g: 'Ghaziabad' },
+      { v: 'Shalimar Garden',       g: 'Ghaziabad' },
+      { v: 'New Shalimar Garden',   g: 'Ghaziabad' },
+      { v: 'Nandgram',              g: 'Ghaziabad' },
+      { v: 'Ankur Vihar',           g: 'Ghaziabad' },
+      { v: 'Surya Nagar',           g: 'Ghaziabad' },
+      { v: 'Lal Kuan',              g: 'Ghaziabad' },
+      { v: 'Dundahera',             g: 'Ghaziabad' },
+      { v: 'Dasna',                 g: 'Ghaziabad' },
+      { v: 'Loni',                  g: 'Ghaziabad' },
+      { v: 'Mehrauli',              g: 'Ghaziabad' },
+      { v: 'Bulandshahr Road',      g: 'Ghaziabad' },
+      { v: 'NH-58 Zone',            g: 'Ghaziabad' },
+      // ─── Noida Sectors ───
+      { v: 'Sector 1',  g: 'Noida' }, { v: 'Sector 2',  g: 'Noida' }, { v: 'Sector 3',  g: 'Noida' },
+      { v: 'Sector 4',  g: 'Noida' }, { v: 'Sector 5',  g: 'Noida' }, { v: 'Sector 6',  g: 'Noida' },
+      { v: 'Sector 7',  g: 'Noida' }, { v: 'Sector 8',  g: 'Noida' }, { v: 'Sector 9',  g: 'Noida' },
+      { v: 'Sector 10', g: 'Noida' }, { v: 'Sector 11', g: 'Noida' }, { v: 'Sector 12', g: 'Noida' },
+      { v: 'Sector 14', g: 'Noida' }, { v: 'Sector 15', g: 'Noida' }, { v: 'Sector 15A',g: 'Noida' },
+      { v: 'Sector 16', g: 'Noida' }, { v: 'Sector 17', g: 'Noida' }, { v: 'Sector 18', g: 'Noida' },
+      { v: 'Sector 19', g: 'Noida' }, { v: 'Sector 20', g: 'Noida' }, { v: 'Sector 21', g: 'Noida' },
+      { v: 'Sector 22', g: 'Noida' }, { v: 'Sector 23', g: 'Noida' }, { v: 'Sector 24', g: 'Noida' },
+      { v: 'Sector 25', g: 'Noida' }, { v: 'Sector 26', g: 'Noida' }, { v: 'Sector 27', g: 'Noida' },
+      { v: 'Sector 28', g: 'Noida' }, { v: 'Sector 29', g: 'Noida' }, { v: 'Sector 30', g: 'Noida' },
+      { v: 'Sector 31', g: 'Noida' }, { v: 'Sector 32', g: 'Noida' }, { v: 'Sector 33', g: 'Noida' },
+      { v: 'Sector 34', g: 'Noida' }, { v: 'Sector 35', g: 'Noida' }, { v: 'Sector 36', g: 'Noida' },
+      { v: 'Sector 37', g: 'Noida' }, { v: 'Sector 38', g: 'Noida' }, { v: 'Sector 39', g: 'Noida' },
+      { v: 'Sector 40', g: 'Noida' }, { v: 'Sector 41', g: 'Noida' }, { v: 'Sector 43', g: 'Noida' },
+      { v: 'Sector 44', g: 'Noida' }, { v: 'Sector 45', g: 'Noida' }, { v: 'Sector 46', g: 'Noida' },
+      { v: 'Sector 47', g: 'Noida' }, { v: 'Sector 48', g: 'Noida' }, { v: 'Sector 49', g: 'Noida' },
+      { v: 'Sector 50', g: 'Noida' }, { v: 'Sector 51', g: 'Noida' }, { v: 'Sector 52', g: 'Noida' },
+      { v: 'Sector 53', g: 'Noida' }, { v: 'Sector 55', g: 'Noida' }, { v: 'Sector 56', g: 'Noida' },
+      { v: 'Sector 57', g: 'Noida' }, { v: 'Sector 58', g: 'Noida' }, { v: 'Sector 61', g: 'Noida' },
+      { v: 'Sector 62', g: 'Noida' }, { v: 'Sector 63', g: 'Noida' }, { v: 'Sector 65', g: 'Noida' },
+      { v: 'Sector 66', g: 'Noida' }, { v: 'Sector 70', g: 'Noida' }, { v: 'Sector 71', g: 'Noida' },
+      { v: 'Sector 72', g: 'Noida' }, { v: 'Sector 73', g: 'Noida' }, { v: 'Sector 74', g: 'Noida' },
+      { v: 'Sector 75', g: 'Noida' }, { v: 'Sector 76', g: 'Noida' }, { v: 'Sector 77', g: 'Noida' },
+      { v: 'Sector 78', g: 'Noida' }, { v: 'Sector 79', g: 'Noida' }, { v: 'Sector 82', g: 'Noida' },
+      { v: 'Sector 91', g: 'Noida' }, { v: 'Sector 92', g: 'Noida' }, { v: 'Sector 93', g: 'Noida' },
+      { v: 'Sector 93A',g: 'Noida' }, { v: 'Sector 93B',g: 'Noida' }, { v: 'Sector 94', g: 'Noida' },
+      { v: 'Sector 96', g: 'Noida' }, { v: 'Sector 99', g: 'Noida' }, { v: 'Sector 100',g: 'Noida' },
+      { v: 'Sector 104',g: 'Noida' }, { v: 'Sector 105',g: 'Noida' }, { v: 'Sector 107',g: 'Noida' },
+      { v: 'Sector 108',g: 'Noida' }, { v: 'Sector 110',g: 'Noida' }, { v: 'Sector 113',g: 'Noida' },
+      { v: 'Sector 116',g: 'Noida' }, { v: 'Sector 117',g: 'Noida' }, { v: 'Sector 118',g: 'Noida' },
+      { v: 'Sector 119',g: 'Noida' }, { v: 'Sector 120',g: 'Noida' }, { v: 'Sector 121',g: 'Noida' },
+      { v: 'Sector 122',g: 'Noida' }, { v: 'Sector 125',g: 'Noida' }, { v: 'Sector 126',g: 'Noida' },
+      { v: 'Sector 127',g: 'Noida' }, { v: 'Sector 128',g: 'Noida' }, { v: 'Sector 129',g: 'Noida' },
+      { v: 'Sector 130',g: 'Noida' }, { v: 'Sector 131',g: 'Noida' }, { v: 'Sector 132',g: 'Noida' },
+      { v: 'Sector 133',g: 'Noida' }, { v: 'Sector 134',g: 'Noida' }, { v: 'Sector 135',g: 'Noida' },
+      { v: 'Sector 136',g: 'Noida' }, { v: 'Sector 137',g: 'Noida' }, { v: 'Sector 143',g: 'Noida' },
+      { v: 'Sector 144',g: 'Noida' }, { v: 'Sector 150',g: 'Noida' }, { v: 'Sector 151',g: 'Noida' },
+      { v: 'Sector 152',g: 'Noida' }, { v: 'Sector 153',g: 'Noida' }, { v: 'Sector 155',g: 'Noida' },
+      { v: 'Sector 158',g: 'Noida' }, { v: 'Sector 159',g: 'Noida' }, { v: 'Sector 162',g: 'Noida' },
+      { v: 'Sector 163',g: 'Noida' }, { v: 'Sector 164',g: 'Noida' }, { v: 'Sector 165',g: 'Noida' },
+      { v: 'Sector 166',g: 'Noida' }, { v: 'Sector 168',g: 'Noida' },
+      // ─── Greater Noida ───
+      { v: 'Greater Noida West',   g: 'Greater Noida' },
+      { v: 'Alpha 1',              g: 'Greater Noida' },
+      { v: 'Alpha 2',              g: 'Greater Noida' },
+      { v: 'Beta 1',               g: 'Greater Noida' },
+      { v: 'Beta 2',               g: 'Greater Noida' },
+      { v: 'Gamma 1',              g: 'Greater Noida' },
+      { v: 'Gamma 2',              g: 'Greater Noida' },
+      { v: 'Delta 1',              g: 'Greater Noida' },
+      { v: 'Delta 2',              g: 'Greater Noida' },
+      { v: 'Zeta 1',               g: 'Greater Noida' },
+      { v: 'Zeta 2',               g: 'Greater Noida' },
+      { v: 'Omega',                g: 'Greater Noida' },
+      { v: 'Sigma 1',              g: 'Greater Noida' },
+      { v: 'Sigma 2',              g: 'Greater Noida' },
+      { v: 'Sigma 3',              g: 'Greater Noida' },
+      { v: 'Sigma 4',              g: 'Greater Noida' },
+      { v: 'Chi 1',                g: 'Greater Noida' },
+      { v: 'Chi 2',                g: 'Greater Noida' },
+      { v: 'Chi 4',                g: 'Greater Noida' },
+      { v: 'Chi 5',                g: 'Greater Noida' },
+      { v: 'Phi 1',                g: 'Greater Noida' },
+      { v: 'Phi 2',                g: 'Greater Noida' },
+      { v: 'Phi 3',                g: 'Greater Noida' },
+      { v: 'Psi 1',                g: 'Greater Noida' },
+      { v: 'Psi 2',                g: 'Greater Noida' },
+      { v: 'Eta 1',                g: 'Greater Noida' },
+      { v: 'Eta 2',                g: 'Greater Noida' },
+      { v: 'Xi 1',                 g: 'Greater Noida' },
+      { v: 'Mu 1',                 g: 'Greater Noida' },
+      { v: 'Omicron 1',            g: 'Greater Noida' },
+      { v: 'Omicron 2',            g: 'Greater Noida' },
+      { v: 'Omicron 3',            g: 'Greater Noida' },
+      { v: 'Knowledge Park 1',     g: 'Greater Noida' },
+      { v: 'Knowledge Park 2',     g: 'Greater Noida' },
+      { v: 'Knowledge Park 3',     g: 'Greater Noida' },
+      { v: 'Knowledge Park 4',     g: 'Greater Noida' },
+      { v: 'Knowledge Park 5',     g: 'Greater Noida' },
+      { v: 'NRI City',             g: 'Greater Noida' },
+      { v: 'Swarn Nagri',          g: 'Greater Noida' },
+      { v: 'Kasna',                g: 'Greater Noida' },
+      { v: 'Surajpur',             g: 'Greater Noida' },
+      { v: 'Sector 1 (GN)',        g: 'Greater Noida' },
+      { v: 'Sector 2 (GN)',        g: 'Greater Noida' },
+      { v: 'Sector 3 (GN)',        g: 'Greater Noida' },
+    ];
+
+    let _locFocusIdx = -1;
+
+    function filterLocations(q) {
+      const drop = document.getElementById('locDrop');
+      const s = (q || '').trim().toLowerCase();
+      // Show top 8 per group when empty, filtered when typing
+      const ghaziabad = NCR_AREAS.filter(a => a.g === 'Ghaziabad' && (!s || a.v.toLowerCase().includes(s)));
+      const noida     = NCR_AREAS.filter(a => a.g === 'Noida'     && (!s || a.v.toLowerCase().includes(s)));
+      const gnNoida   = NCR_AREAS.filter(a => a.g === 'Greater Noida' && (!s || a.v.toLowerCase().includes(s)));
+      const capGhz = s ? ghaziabad : ghaziabad.slice(0, 6);
+      const capNoi = s ? noida     : noida.slice(0, 8);
+      const capGN  = s ? gnNoida   : gnNoida.slice(0, 6);
+      if (!capGhz.length && !capNoi.length && !capGN.length) {
+        drop.innerHTML = '<div style="padding:12px 14px;font-size:0.83rem;color:var(--muted)">No matching area found</div>';
+        drop.classList.add('open');
+        return;
+      }
+      let html = '';
+      if (capGhz.length) {
+        html += '<div class="loc-group">&#127960;&#65039; Ghaziabad</div>';
+        html += capGhz.map(a => '<div class="loc-item" onmousedown="pickLocation(\'' + a.v + '\',\'' + a.g + '\')">'
+          + highlight(a.v, s) + '</div>').join('');
+      }
+      if (capNoi.length) {
+        html += '<div class="loc-group">&#127970; Noida Sectors</div>';
+        html += capNoi.map(a => '<div class="loc-item" onmousedown="pickLocation(\'' + a.v + '\',\'' + a.g + '\')">'
+          + highlight(a.v, s) + '</div>').join('');
+      }
+      if (capGN.length) {
+        html += '<div class="loc-group">&#127775; Greater Noida</div>';
+        html += capGN.map(a => '<div class="loc-item" onmousedown="pickLocation(\'' + a.v + '\',\'' + a.g + '\')">'
+          + highlight(a.v, s) + '</div>').join('');
+      }
+      drop.innerHTML = html;
+      drop.classList.add('open');
+      _locFocusIdx = -1;
+    }
+
+    function highlight(text, q) {
+      if (!q) return text;
+      const idx = text.toLowerCase().indexOf(q);
+      if (idx === -1) return text;
+      return text.slice(0, idx) + '<strong style="color:var(--purple)">' + text.slice(idx, idx + q.length) + '</strong>' + text.slice(idx + q.length);
+    }
+
+    function pickLocation(v, g) {
+      document.getElementById('propLocation').value = v;
+      document.getElementById('propLocationSearch').value = v;
+      document.getElementById('locDrop').classList.remove('open');
+      const tag = document.getElementById('locTag');
+      tag.style.display = 'flex';
+      tag.innerHTML = '<span class="loc-tag">&#128205; ' + v + ', ' + g + ' <button type="button" onclick="clearLocation()" title="Clear">&#10005;</button></span>';
+      _locFocusIdx = -1;
+    }
+
+    function clearLocation() {
+      document.getElementById('propLocation').value = '';
+      document.getElementById('propLocationSearch').value = '';
+      document.getElementById('locTag').style.display = 'none';
+      document.getElementById('locTag').innerHTML = '';
+    }
+
+    function locKeyNav(e) {
+      const drop = document.getElementById('locDrop');
+      const items = Array.from(drop.querySelectorAll('.loc-item'));
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        _locFocusIdx = Math.min(_locFocusIdx + 1, items.length - 1);
+        items.forEach((el, i) => el.classList.toggle('loc-focused', i === _locFocusIdx));
+        if (items[_locFocusIdx]) items[_locFocusIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        _locFocusIdx = Math.max(_locFocusIdx - 1, 0);
+        items.forEach((el, i) => el.classList.toggle('loc-focused', i === _locFocusIdx));
+        if (items[_locFocusIdx]) items[_locFocusIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter' && _locFocusIdx >= 0) {
+        e.preventDefault();
+        items[_locFocusIdx].dispatchEvent(new MouseEvent('mousedown'));
+      } else if (e.key === 'Escape') {
+        drop.classList.remove('open');
+      }
+    }
+
+    // Close on outside click
+    document.addEventListener('click', function (e) {
+      const search = document.getElementById('propLocationSearch');
+      const drop = document.getElementById('locDrop');
+      if (search && drop && !search.contains(e.target) && !drop.contains(e.target)) {
+        drop.classList.remove('open');
+      }
+    });
 
     function toggleBedrooms() {
       const type = document.getElementById('propType').value;
@@ -1254,7 +1642,7 @@
       const file = input.files[0];
       if (!file) return;
       if (!file.type.startsWith('video/')) { alert('Please select a video file.'); return; }
-      if (file.size > 200 * 1024 * 1024) { alert('Video must be under 200MB.'); return; }
+      if (file.size > 50 * 1024 * 1024) { alert('Video must be under 50MB. Please compress or trim your video before uploading.'); return; }
       uploadedVideoBlob = file;
       if (videoObjectURL) URL.revokeObjectURL(videoObjectURL);
       videoObjectURL = URL.createObjectURL(file);
@@ -1284,28 +1672,56 @@
       if (q.length < 3) { drop.style.display = 'none'; return; }
       drop.innerHTML = '<div class="addr-loading">&#128269; Searching...</div>';
       drop.style.display = 'block';
-      _addrTimer = setTimeout(function () { fetchAddrSugg(q, input, drop, linkId); }, 380);
+      _addrTimer = setTimeout(function () { fetchAddrSugg(q, input, drop, linkId); }, 500);
     }
 
+    // NCR viewbox: SW 28.30,76.80 → NE 29.00,77.85
+    const NCR_VIEWBOX = '76.80,28.30,77.85,29.00';
+
     function fetchAddrSugg(q, input, drop, linkId) {
-      // Bias to NCR Delhi region (lat 28.6, lon 77.3)
-      const url = 'https://photon.komoot.io/api/?q=' + encodeURIComponent(q) + '&lat=28.6&lon=77.3&limit=7&lang=en';
-      fetch(url).then(function (r) { return r.json(); }).then(function (data) {
-        if (!data.features || !data.features.length) { drop.innerHTML = '<div class="addr-loading">No results found. Try a different query.</div>'; return; }
-        drop.innerHTML = data.features.map(function (f, i) {
-          const p = f.properties;
-          const street = p.housenumber && p.street ? p.housenumber + ' ' + p.street : p.street || '';
-          const main = [p.name, street].filter(Boolean).join(', ') || p.city || p.district || 'Unknown';
-          const sub = [p.district, p.city, p.state, p.postcode].filter(Boolean).join(', ');
-          const full = [p.name, street, p.district, p.city, p.state, p.postcode, 'India'].filter(Boolean).join(', ');
-          const lat = f.geometry.coordinates[1], lon = f.geometry.coordinates[0];
-          return '<div class="addr-item" data-full="' + encodeURIComponent(full) + '" data-lat="' + lat + '" data-lon="' + lon + '" data-input="' + input.id + '" data-link="' + linkId + '" data-drop="' + drop.id + '" onmousedown="pickAddr(this)" tabindex="-1">'
-            + '<span class="addr-item-pin">&#128205;</span>'
-            + '<div><div class="addr-item-main">' + main + '</div><div class="addr-item-sub">' + sub + '</div></div></div>';
-        }).join('');
-      }).catch(function () {
-        drop.innerHTML = '<div class="addr-loading">Connection error. Please type the address manually.</div>';
+      // Nominatim: India-specific, NCR viewbox biased, structured address details
+      const params = new URLSearchParams({
+        q: q,
+        format: 'json',
+        addressdetails: '1',
+        countrycodes: 'in',
+        viewbox: NCR_VIEWBOX,
+        bounded: '0',          // show NCR results first but don't exclude others in India
+        limit: '8',
+        dedupe: '1',
+        'accept-language': 'en'
       });
+      const url = 'https://nominatim.openstreetmap.org/search?' + params.toString();
+      fetch(url, { headers: { 'Accept-Language': 'en' } })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.length) {
+            drop.innerHTML = '<div class="addr-loading">No results found. Try a different query or use the 📍 map pin.</div>';
+            return;
+          }
+          drop.innerHTML = data.map(function (f) {
+            const a = f.address || {};
+            // Build a concise main label
+            const name = f.name || a.amenity || a.building || a.tourism || '';
+            const road = a.road || a.pedestrian || a.footway || '';
+            const suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
+            const city = a.city || a.county || a.state_district || '';
+            const state = a.state || '';
+            const postcode = a.postcode || '';
+
+            let main = name || road || suburb || city || f.display_name.split(',')[0];
+            let sub = [road && name ? road : '', suburb, city, state, postcode].filter(Boolean).join(', ');
+            // Build full address for storing
+            const full = [name, road, suburb, city, state, postcode, 'India'].filter(Boolean).join(', ');
+
+            const lat = parseFloat(f.lat), lon = parseFloat(f.lon);
+            return '<div class="addr-item" data-full="' + encodeURIComponent(full) + '" data-lat="' + lat + '" data-lon="' + lon + '" data-input="' + input.id + '" data-link="' + linkId + '" data-drop="' + drop.id + '" onmousedown="pickAddr(this)" tabindex="-1">'
+              + '<span class="addr-item-pin">&#128205;</span>'
+              + '<div><div class="addr-item-main">' + main + '</div><div class="addr-item-sub">' + sub + '</div></div></div>';
+          }).join('');
+        }).catch(function () {
+          drop.innerHTML = '<div class="addr-loading">Connection error. Please type the address manually or use the 📍 map pin.</div>';
+        });
     }
 
     function pickAddr(el) {
@@ -1344,8 +1760,10 @@
       if (!pickerMap) {
         // Initial NCR bias
         pickerMap = L.map('mapPickerDiv').setView([28.6, 77.3], 11);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19, attribution: '© OpenStreetMap'
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
         }).addTo(pickerMap);
 
         pickerMap.on('click', function (e) {
@@ -1382,7 +1800,103 @@
 
     function closeMapPicker() {
       document.getElementById('mapPickerModal').classList.remove('active');
+      // Clear map search
+      const si = document.getElementById('mapSearchInput');
+      const sd = document.getElementById('mapSearchDrop');
+      if (si) si.value = '';
+      if (sd) sd.classList.remove('open');
     }
+
+    // ── Map Picker Search ──────────────────────────────────────────
+    let _mapSearchTimer = null, _mapSearchIdx = -1;
+
+    function mapSearchDebounce() {
+      clearTimeout(_mapSearchTimer);
+      const q = (document.getElementById('mapSearchInput').value || '').trim();
+      const drop = document.getElementById('mapSearchDrop');
+      if (q.length < 3) { drop.classList.remove('open'); return; }
+      drop.innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">🔍 Searching...</div>';
+      drop.classList.add('open');
+      _mapSearchTimer = setTimeout(function () { fetchMapSearch(q); }, 450);
+    }
+
+    function fetchMapSearch(q) {
+      const params = new URLSearchParams({ q: q, format: 'json', addressdetails: '1', countrycodes: 'in', viewbox: '76.80,28.30,77.85,29.00', bounded: '0', limit: '7', dedupe: '1', 'accept-language': 'en' });
+      fetch('https://nominatim.openstreetmap.org/search?' + params.toString(), { headers: { 'Accept-Language': 'en' } })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          const drop = document.getElementById('mapSearchDrop');
+          if (!data || !data.length) {
+            drop.innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">No results found</div>';
+            return;
+          }
+          drop.innerHTML = data.map(function (f, i) {
+            const a = f.address || {};
+            const name = f.name || a.amenity || a.building || a.tourism || '';
+            const road = a.road || a.pedestrian || '';
+            const suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
+            const city = a.city || a.county || a.state_district || '';
+            const main = name || road || suburb || city || f.display_name.split(',')[0];
+            const sub = [road && name ? road : '', suburb, city, a.state].filter(Boolean).join(', ');
+            return '<div class="map-search-item" data-lat="' + f.lat + '" data-lon="' + f.lon + '" data-display="' + encodeURIComponent(f.display_name) + '" onmousedown="pickMapResult(this)">'
+              + '<span>📍</span>'
+              + '<div><div class="map-search-item-main">' + main + '</div><div class="map-search-item-sub">' + sub + '</div></div></div>';
+          }).join('');
+          _mapSearchIdx = -1;
+        }).catch(function () {
+          const drop = document.getElementById('mapSearchDrop');
+          drop.innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">Connection error. Try again.</div>';
+        });
+    }
+
+    function pickMapResult(el) {
+      const lat = parseFloat(el.dataset.lat), lon = parseFloat(el.dataset.lon);
+      const displayName = decodeURIComponent(el.dataset.display);
+      // Pan map and drop pin
+      if (pickerMap) {
+        pickerMap.setView([lat, lon], 17);
+        if (pickerMarker) pickerMarker.setLatLng([lat, lon]);
+        else pickerMarker = L.marker([lat, lon]).addTo(pickerMap);
+        pickedCoords = { lat, lon };
+        pickedAddress = displayName;
+        document.getElementById('mapPickedAddrText').textContent = displayName;
+        document.getElementById('btnConfirmMap').disabled = false;
+      }
+      // Close drop and clear search input
+      document.getElementById('mapSearchDrop').classList.remove('open');
+      document.getElementById('mapSearchInput').value = el.querySelector('.map-search-item-main').textContent;
+    }
+
+    function mapSearchKeyNav(e) {
+      const drop = document.getElementById('mapSearchDrop');
+      const items = Array.from(drop.querySelectorAll('[data-lat]'));
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        _mapSearchIdx = Math.min(_mapSearchIdx + 1, items.length - 1);
+        items.forEach(function (el, i) { el.classList.toggle('msi-focused', i === _mapSearchIdx); });
+        if (items[_mapSearchIdx]) items[_mapSearchIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        _mapSearchIdx = Math.max(_mapSearchIdx - 1, 0);
+        items.forEach(function (el, i) { el.classList.toggle('msi-focused', i === _mapSearchIdx); });
+        if (items[_mapSearchIdx]) items[_mapSearchIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter' && _mapSearchIdx >= 0) {
+        e.preventDefault();
+        items[_mapSearchIdx].dispatchEvent(new MouseEvent('mousedown'));
+      } else if (e.key === 'Escape') {
+        drop.classList.remove('open');
+      }
+    }
+
+    // Close map search drop on outside click
+    document.addEventListener('click', function (e) {
+      const inp = document.getElementById('mapSearchInput');
+      const drop = document.getElementById('mapSearchDrop');
+      if (inp && drop && !inp.contains(e.target) && !drop.contains(e.target)) {
+        drop.classList.remove('open');
+      }
+    });
 
     function locateMeOnMap() {
       if (!navigator.geolocation) {
@@ -1471,7 +1985,7 @@
           const photoUrls = [];
           for (let i = 0; i < uploadedPhotos.length; i++) {
             const fName = `public/photo-${Date.now()}-${i}.jpg`;
-            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedPhotos[i].blob);
+            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedPhotos[i].blob, { contentType: 'image/jpeg', upsert: false });
             if (error) throw error;
             const pUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
             photoUrls.push(pUrl);
@@ -1480,16 +1994,20 @@
           let vidUrl = null;
           if (uploadedVideoBlob) {
             const fName = `public/video-${Date.now()}.${uploadedVideoBlob.name.split('.').pop() || 'mp4'}`;
-            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedVideoBlob);
+            const { data, error } = await supabaseClient.storage.from('property-media').upload(fName, uploadedVideoBlob, { contentType: uploadedVideoBlob.type || 'video/mp4', upsert: false });
             if (error) throw error;
             vidUrl = supabaseClient.storage.from('property-media').getPublicUrl(fName).data.publicUrl;
           }
 
           btn.textContent = 'Saving Listing...';
+          // Grab coordinates saved when seller picked address from autocomplete or map
+          const coords = _addrCoords['propAddress'] || null;
           const listing = {
             type, location, price, size, bedrooms, description: desc, address,
             seller_name: sellerName, seller_phone: sellerPhone, seller_email: sellerEmail,
-            status: 'pending', photos: photoUrls, video_url: vidUrl
+            status: 'pending', photos: photoUrls, video_url: vidUrl,
+            lat: coords ? coords.lat : null,
+            lon: coords ? coords.lon : null
           };
 
           const { error: dbErr } = await supabaseClient.from('properties').insert([listing]);
@@ -1505,7 +2023,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }, 600);
         } catch (err) {
-          alert('Error submitting listing: ' + err.message);
+          let errMsg = err.message || '';
+          if (errMsg.toLowerCase().includes('object size') || errMsg.toLowerCase().includes('payload too large') || errMsg.toLowerCase().includes('size limit')) {
+            alert('Upload failed: File size too large.\n\nPlease ensure:\n• Photos are under 15MB each\n• Video is under 50MB\n\nTip: Compress your video using a free tool like HandBrake or Clipchamp before uploading.');
+          } else {
+            alert('Error submitting listing: ' + errMsg);
+          }
           btn.disabled = false; btn.textContent = 'Submit Listing for Verification';
         }
       }
