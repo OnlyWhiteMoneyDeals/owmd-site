@@ -1655,18 +1655,18 @@
       // Build pre-filled WhatsApp message
       const bhk = p.bedrooms > 0 ? p.bedrooms + ' BHK ' : '';
       const price = formatPrice(p.price);
-      const size = p.size ? p.size.toLocaleString() + ' sqft' : '';
+      const sizeStr = p.size ? p.size.toLocaleString() + ' sqft' : '';
       const lines = [
         'Hi OWMD Team! 👋',
         '',
-        'I am interested in the following property listed on OWMD:',
+        'I am interested in the following property:',
         '🏠 *' + bhk + p.type + ' in ' + p.location + '*',
         '💰 Price: *' + price + '*',
-        size ? '📏 Size: ' + size : '',
+        sizeStr ? '📏 Size: ' + sizeStr : null,
         '',
-        'Please share more details and connect me with the seller.',
+        'Please share more details and help me connect with the seller.',
         '',
-        '_This is a 100% white money deal. 💸_'
+        '✅ 100% White Money Deal - Listed on OWMD'
       ].filter(function (l) { return l !== null && l !== undefined; });
 
       const waText = encodeURIComponent(lines.join('\n'));
