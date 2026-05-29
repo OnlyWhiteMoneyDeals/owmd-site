@@ -1652,21 +1652,22 @@
       if (!p) return;
       currentProperty = p;
 
-      // Build pre-filled WhatsApp message
+      // Build pre-filled WhatsApp message (plain text — emoji cause encoding issues)
       const bhk = p.bedrooms > 0 ? p.bedrooms + ' BHK ' : '';
       const price = formatPrice(p.price);
       const sizeStr = p.size ? p.size.toLocaleString() + ' sqft' : '';
       const lines = [
-        'Hi OWMD Team! 👋',
+        'Hi OWMD Team,',
         '',
-        'I am interested in the following property:',
-        '🏠 *' + bhk + p.type + ' in ' + p.location + '*',
-        '💰 Price: *' + price + '*',
-        sizeStr ? '📏 Size: ' + sizeStr : null,
+        'I am interested in the following property listed on OnlyWhiteMoneyDeals:',
+        '',
+        'Property: ' + bhk + p.type + ' in ' + p.location,
+        'Price: ' + price,
+        sizeStr ? 'Size: ' + sizeStr : null,
         '',
         'Please share more details and help me connect with the seller.',
         '',
-        '✅ 100% White Money Deal - Listed on OWMD'
+        'This is a 100% White Money deal.'
       ].filter(function (l) { return l !== null && l !== undefined; });
 
       const waText = encodeURIComponent(lines.join('\n'));
