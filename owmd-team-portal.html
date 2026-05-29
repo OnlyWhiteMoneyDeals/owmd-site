@@ -1392,188 +1392,410 @@
       }
     }
     /* ---- Interest Dashboard ---- */
+    .int-section {
+      padding: 0 20px 28px
+    }
     .int-dash-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 20px 10px;
+      padding: 20px 20px 0;
       flex-wrap: wrap;
       gap: 12px
     }
-    .int-stats-bar {
+    .int-dash-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text)
+    }
+    .int-dash-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px
+    }
+    .btn-refresh-int {
+      background: var(--purple-bg);
+      border: 1.5px solid #DDD6FE;
+      color: var(--purple);
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+    .btn-refresh-int:hover { background: #EDE9FE; transform: translateY(-1px) }
+    /* Stat cards */
+    .int-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0
+    }
+    .int-stat-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04)
+    }
+    .int-stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0
+    }
+    .int-stat-icon.purple { background: var(--purple-bg) }
+    .int-stat-icon.amber  { background: #FFF7ED }
+    .int-stat-icon.green  { background: #F0FDF4 }
+    .int-stat-icon.blue   { background: #EFF6FF }
+    .int-stat-info {
+      flex: 1;
+      min-width: 0
+    }
+    .int-stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1
+    }
+    .int-stat-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px
+    }
+    .int-stat-trend {
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px
+    }
+    .int-stat-trend.up { color: #059669 }
+    .int-stat-trend.neutral { color: var(--muted) }
+    /* Sort bar */
+    .int-sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 14px;
+      flex-wrap: wrap;
+      gap: 8px
+    }
+    .int-sort-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em
+    }
+    .int-sort-tabs {
+      display: flex;
+      gap: 4px
+    }
+    .int-sort-tab {
+      background: #F9FAFB;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 13px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s
+    }
+    .int-sort-tab.active, .int-sort-tab:hover {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border-color: #DDD6FE
+    }
+    /* Grid */
+    .int-dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px
+    }
+    /* Card */
+    .int-prop-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(107,31,168,0.06);
+      transition: box-shadow 0.25s, transform 0.25s
+    }
+    .int-prop-card:hover { box-shadow: 0 8px 28px rgba(107,31,168,0.15); transform: translateY(-2px) }
+    /* Heat accent bar */
+    .int-card-accent {
+      height: 4px;
+      width: 100%
+    }
+    .int-card-accent.hot    { background: linear-gradient(90deg, #EF4444, #F97316) }
+    .int-card-accent.active { background: linear-gradient(90deg, var(--purple), #8B5CF6) }
+    .int-card-accent.new    { background: linear-gradient(90deg, #10B981, #34D399) }
+    /* Card body */
+    .int-card-body {
+      padding: 14px 16px 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+    .int-card-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--purple-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem
+    }
+    .int-card-thumb img { width: 100%; height: 100%; object-fit: cover }
+    .int-card-info { flex: 1; min-width: 0 }
+    .int-card-badges {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 5px
+    }
+    .int-badge {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 20px
+    }
+    .int-badge.heat-hot    { background: #FEF2F2; color: #B91C1C }
+    .int-badge.heat-active { background: var(--purple-bg); color: var(--purple) }
+    .int-badge.heat-new    { background: #F0FDF4; color: #166534 }
+    .int-badge.status-v    { background: #D1FAE5; color: #065F46 }
+    .int-badge.status-p    { background: #FEF9C3; color: #854D0E }
+    .int-badge.status-s    { background: #EFF6FF; color: #1E40AF }
+    .int-card-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px
+    }
+    .int-card-meta {
+      font-size: 0.74rem;
+      color: var(--muted);
       display: flex;
       gap: 8px;
       flex-wrap: wrap
     }
-    .int-stat-pill {
-      background: var(--purple-bg);
-      color: var(--purple);
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 5px 14px;
-      border-radius: 20px;
-      border: 1px solid #DDD6FE
-    }
-    .int-stat-pill.today { background: #FFF7ED; color: #C2410C; border-color: #FED7AA }
-    .int-stat-pill.week  { background: #F0FDF4; color: #166534; border-color: #BBF7D0 }
-    .btn-refresh-int {
-      background: var(--purple-bg);
-      border: 1px solid #DDD6FE;
-      color: var(--purple);
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.2s
-    }
-    .btn-refresh-int:hover { background: #EDE9FE }
-    .int-dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px;
-      padding: 0 20px 24px
-    }
-    .int-prop-card {
-      background: #fff;
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(107,31,168,0.07);
-      transition: box-shadow 0.2s
-    }
-    .int-prop-card:hover { box-shadow: 0 4px 20px rgba(107,31,168,0.14) }
-    .int-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px 10px;
-      cursor: pointer;
-      user-select: none
-    }
-    .int-card-left { flex: 1; min-width: 0 }
-    .int-card-type {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      margin-bottom: 2px
-    }
-    .int-card-name {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis
-    }
-    .int-card-meta {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 3px
-    }
-    .int-card-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
+    .int-card-meta span { display: flex; align-items: center; gap: 3px }
+    /* Count badge */
+    .int-count-wrap {
       flex-shrink: 0;
-      margin-left: 12px
+      text-align: center
     }
     .int-count-badge {
-      background: var(--purple);
-      color: #fff;
-      font-size: 1.05rem;
-      font-weight: 800;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(107,31,168,0.3)
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(107,31,168,0.35)
     }
+    .int-count-badge.hot    { background: linear-gradient(135deg, #EF4444, #F97316) }
+    .int-count-badge.active { background: linear-gradient(135deg, var(--purple), #8B5CF6) }
+    .int-count-badge.new    { background: linear-gradient(135deg, #10B981, #34D399) }
     .int-count-label {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       color: var(--muted);
-      font-weight: 600;
-      text-align: center;
-      margin-top: -4px
-    }
-    .int-card-actions {
-      display: flex;
-      gap: 6px;
-      padding: 0 16px 12px;
-      border-top: 1px solid var(--border);
-      padding-top: 10px
-    }
-    .int-btn-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--purple-bg);
-      color: var(--purple);
-      border: 1px solid #DDD6FE;
-      border-radius: 7px;
-      padding: 5px 12px;
-      font-size: 0.75rem;
       font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.2s
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em
     }
-    .int-btn-link:hover { background: #EDE9FE }
-    .int-expand-toggle {
-      background: #F9FAFB;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 5px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
+    /* Mini chart */
+    .int-mini-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 28px;
+      padding: 10px 16px 0;
+      margin-bottom: 0
+    }
+    .int-mini-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      min-height: 4px;
+      transition: height 0.3s
+    }
+    .int-mini-bar.has-data  { background: var(--purple); opacity: 0.7 }
+    .int-mini-bar.no-data   { background: #E5E7EB }
+    .int-mini-chart-label {
+      font-size: 0.62rem;
       color: var(--muted);
-      font-family: inherit;
-      font-weight: 600;
-      transition: background 0.2s
+      padding: 3px 16px 8px;
+      text-align: right
     }
-    .int-expand-toggle:hover { background: #F3F4F6 }
-    .int-logs {
-      display: none;
-      border-top: 1px solid var(--border);
-      padding: 10px 16px 14px
-    }
-    .int-logs.open { display: block }
-    .int-log-row {
+    /* Card footer */
+    .int-card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 7px 0;
-      border-bottom: 1px dashed #F3F4F6;
-      font-size: 0.78rem
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      gap: 6px;
+      flex-wrap: wrap
     }
-    .int-log-row:last-child { border-bottom: none }
-    .int-log-time { color: var(--muted) }
+    .int-footer-links { display: flex; gap: 6px }
+    .int-btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--purple-bg);
+      color: var(--purple);
+      border: 1.5px solid #DDD6FE;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s
+    }
+    .int-btn-link:hover { background: #EDE9FE; transform: translateY(-1px) }
+    .int-expand-toggle {
+      background: #F9FAFB;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: inherit;
+      font-weight: 700;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+    .int-expand-toggle:hover { background: #F3F4F6; color: var(--text) }
+    /* Logs timeline */
+    .int-logs {
+      display: none;
+      padding: 0 16px 14px
+    }
+    .int-logs.open { display: block }
+    .int-logs-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 10px 0 8px;
+      border-top: 1px solid var(--border)
+    }
+    .int-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative
+    }
+    .int-timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 6px;
+      width: 1.5px;
+      background: #E5E7EB
+    }
+    .int-log-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+      position: relative
+    }
+    .int-log-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--purple-bg);
+      border: 2px solid var(--purple);
+      flex-shrink: 0;
+      z-index: 1
+    }
+    .int-log-dot.first { background: var(--purple) }
+    .int-log-text {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--text)
+    }
+    .int-log-rel {
+      font-size: 0.7rem;
+      color: var(--muted);
+      white-space: nowrap
+    }
     .int-log-del {
       background: none;
       border: none;
       cursor: pointer;
-      color: var(--red);
-      font-size: 0.82rem;
-      padding: 2px 6px;
+      color: #D1D5DB;
+      font-size: 0.8rem;
+      padding: 2px 5px;
       border-radius: 4px;
-      transition: background 0.2s
+      transition: all 0.2s
     }
-    .int-log-del:hover { background: #FEE2E2 }
+    .int-log-del:hover { color: var(--red); background: #FEE2E2 }
+    /* Empty state */
     .int-empty-card {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 48px 20px;
-      color: var(--muted);
-      font-size: 0.9rem
+      padding: 60px 20px;
+      color: var(--muted)
+    }
+    .int-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.4
+    }
+    .int-empty-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px
+    }
+    .int-empty-sub {
+      font-size: 0.82rem
+    }
+    @media (max-width: 900px) {
+      .int-stats-grid { grid-template-columns: repeat(2, 1fr) }
     }
     @media (max-width: 600px) {
-      .int-dashboard-grid { grid-template-columns: 1fr; padding: 0 12px 20px }
+      .int-dashboard-grid { grid-template-columns: 1fr }
+      .int-section { padding: 0 12px 20px }
+      .int-dash-header { padding: 16px 12px 0 }
+      .int-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px }
+      .int-stat-card { padding: 12px }
+      .int-stat-value { font-size: 1.2rem }
     }
   </style>
 </head>
@@ -1643,13 +1865,24 @@
       </div>
       <div class="tab-panel" id="tab-interests">
         <div class="int-dash-header">
-          <div class="panel-title">Interest Dashboard</div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <div id="intStatsBar" class="int-stats-bar"></div>
-            <button class="btn-refresh-int" onclick="refreshInterests()">&#8635; Refresh</button>
+          <div>
+            <div class="int-dash-title">Interest Analytics</div>
+            <div class="int-dash-subtitle">Buyer clicks grouped by property, sorted by popularity</div>
           </div>
+          <button class="btn-refresh-int" onclick="refreshInterests()">&#8635; Refresh</button>
         </div>
-        <div id="intDashboard" class="int-dashboard-grid"></div>
+        <div class="int-section">
+          <div id="intStatsGrid" class="int-stats-grid"></div>
+          <div class="int-sort-bar">
+            <span class="int-sort-label">Sort by</span>
+            <div class="int-sort-tabs">
+              <button class="int-sort-tab active" id="sortPopular" onclick="setIntSort('popular',this)">&#128293; Popular</button>
+              <button class="int-sort-tab" id="sortRecent" onclick="setIntSort('recent',this)">&#128336; Recent</button>
+              <button class="int-sort-tab" id="sortAlpha" onclick="setIntSort('alpha',this)">&#65;&#8209;Z Name</button>
+            </div>
+          </div>
+          <div id="intDashboard" class="int-dashboard-grid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2250,28 +2483,89 @@
       await initDashboard();
     }
 
+    var _intSort = 'popular';
+    function setIntSort(mode, btn) {
+      _intSort = mode;
+      document.querySelectorAll('.int-sort-tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderInterestsDashboard();
+    }
+
     async function refreshInterests() {
       await fetchInterests();
       renderInterestsDashboard();
     }
 
+    function relativeTime(dateStr) {
+      const now = new Date();
+      const d = new Date(dateStr);
+      const diffMs = now - d;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHr = Math.floor(diffMs / 3600000);
+      const diffDay = Math.floor(diffMs / 86400000);
+      if (diffMin < 2) return 'Just now';
+      if (diffMin < 60) return diffMin + ' min ago';
+      if (diffHr < 24) return diffHr + 'h ago';
+      if (diffDay === 1) return 'Yesterday';
+      if (diffDay < 7) return diffDay + ' days ago';
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    }
+
+    function heatLevel(count, weekCount) {
+      if (count >= 5 || weekCount >= 3) return 'hot';
+      if (count >= 2 || weekCount >= 1) return 'active';
+      return 'new';
+    }
+
+    function miniChart(items) {
+      // 7 buckets: last 7 days (newest = rightmost)
+      const now = new Date();
+      const buckets = [0,0,0,0,0,0,0];
+      items.forEach(function(i) {
+        const d = Math.floor((now - new Date(i.created_at)) / 86400000);
+        if (d < 7) buckets[6 - d]++;
+      });
+      const max = Math.max(...buckets, 1);
+      const days = ['M','T','W','T','F','S','S'];
+      const bars = buckets.map(function(v, idx) {
+        const pct = Math.round((v / max) * 100);
+        const cls = v > 0 ? 'has-data' : 'no-data';
+        return '<div class="int-mini-bar ' + cls + '" style="height:' + Math.max(pct, 14) + '%" title="' + v + ' click(s)"></div>';
+      }).join('');
+      return '<div class="int-mini-chart">' + bars + '</div>'
+           + '<div class="int-mini-chart-label">Last 7 days</div>';
+    }
+
     function renderInterestsDashboard() {
       const interests = cachedInterests || [];
       const listings = cachedListings || [];
-
-      // --- Stats bar ---
       const now = new Date();
       const todayStr = now.toDateString();
       const weekAgo = new Date(now - 7 * 864e5);
+      const monthAgo = new Date(now - 30 * 864e5);
+
+      // --- Stat cards ---
       const todayCount = interests.filter(function(i) { return new Date(i.created_at).toDateString() === todayStr; }).length;
       const weekCount = interests.filter(function(i) { return new Date(i.created_at) >= weekAgo; }).length;
-      document.getElementById('intStatsBar').innerHTML =
-        '<span class="int-stat-pill">Total: ' + interests.length + '</span>' +
-        '<span class="int-stat-pill today">Today: ' + todayCount + '</span>' +
-        '<span class="int-stat-pill week">This Week: ' + weekCount + '</span>';
+      const prevWeekCount = interests.filter(function(i) { const d=new Date(i.created_at); return d >= new Date(now-14*864e5) && d < weekAgo; }).length;
+      const hotProps = Object.values((function(){
+        const g={}; interests.forEach(function(i){ const k=i.property_id||i.property_label; g[k]=(g[k]||0)+1; }); return g;
+      })()).filter(function(c){ return c >= 3; }).length;
+      const weekTrend = weekCount > prevWeekCount ? '&#8593; ' + (weekCount - prevWeekCount) + ' vs last week' : weekCount === prevWeekCount ? '= Same as last week' : '&#8595; ' + (prevWeekCount - weekCount) + ' vs last week';
+      const weekTrendCls = weekCount >= prevWeekCount ? 'up' : 'neutral';
+      document.getElementById('intStatsGrid').innerHTML =
+        '<div class="int-stat-card"><div class="int-stat-icon purple">&#128200;</div><div class="int-stat-info"><div class="int-stat-value">' + interests.length + '</div><div class="int-stat-label">Total Clicks</div></div></div>'
+        + '<div class="int-stat-card"><div class="int-stat-icon amber">&#9728;</div><div class="int-stat-info"><div class="int-stat-value">' + todayCount + '</div><div class="int-stat-label">Today</div></div></div>'
+        + '<div class="int-stat-card"><div class="int-stat-icon green">&#128197;</div><div class="int-stat-info"><div class="int-stat-value">' + weekCount + '</div><div class="int-stat-label">This Week</div><div class="int-stat-trend ' + weekTrendCls + '">' + weekTrend + '</div></div></div>'
+        + '<div class="int-stat-card"><div class="int-stat-icon blue">&#128293;</div><div class="int-stat-info"><div class="int-stat-value">' + hotProps + '</div><div class="int-stat-label">Hot Properties</div><div class="int-stat-trend neutral">3+ clicks each</div></div></div>';
 
       if (!interests.length) {
-        document.getElementById('intDashboard').innerHTML = '<div class="int-empty-card">No interest clicks recorded yet. They will appear here when buyers click Express Interest.</div>';
+        document.getElementById('intDashboard').innerHTML =
+          '<div class="int-empty-card">'
+          + '<div class="int-empty-icon">&#128270;</div>'
+          + '<div class="int-empty-title">No interest data yet</div>'
+          + '<div class="int-empty-sub">Clicks will appear here as buyers express interest in listings</div>'
+          + '</div>';
         return;
       }
 
@@ -2283,50 +2577,67 @@
         grouped[key].items.push(i);
       });
 
-      // Sort groups by most interests
-      const groups = Object.values(grouped).sort(function(a, b) { return b.items.length - a.items.length; });
+      let groups = Object.values(grouped);
+      if (_intSort === 'popular') groups.sort(function(a,b){ return b.items.length - a.items.length; });
+      else if (_intSort === 'recent') groups.sort(function(a,b){ return new Date(b.items[0].created_at) - new Date(a.items[0].created_at); });
+      else groups.sort(function(a,b){
+        const la = (listings.find(function(l){return l.id===a.property_id;}) || {}).location || a.label;
+        const lb = (listings.find(function(l){return l.id===b.property_id;}) || {}).location || b.label;
+        return la.localeCompare(lb);
+      });
 
       const cards = groups.map(function(g) {
         const prop = listings.find(function(l) { return l.id === g.property_id; });
-        const label = prop ? (prop.type + ' in ' + prop.location) : g.label;
+        const label = prop ? ((prop.bedrooms > 0 ? prop.bedrooms + ' BHK ' : '') + prop.type + ' in ' + prop.location) : g.label;
         const price = prop ? formatPrice(prop.price) : '';
+        const sizeStr = prop && prop.size ? prop.size.toLocaleString() + ' sqft' : '';
+        const thumb = prop && prop.photos && prop.photos.length > 0 ? prop.photos[0] : null;
         const propUrl = prop ? ('browse-properties.html?id=' + prop.id) : null;
-        const browseUrl = prop ? ('https://onlywhitemoneydeals.com/browse-properties?id=' + prop.id) : null;
-        const lastClick = new Date(g.items[0].created_at);
-        const lastStr = lastClick.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + lastClick.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
         const cardId = 'intcard-' + (g.property_id || 'x').replace(/[^a-z0-9]/gi, '');
+        const wkCount = g.items.filter(function(i){ return new Date(i.created_at) >= weekAgo; }).length;
+        const heat = heatLevel(g.items.length, wkCount);
+        const heatLabel = heat === 'hot' ? '&#128293; Hot' : heat === 'active' ? '&#9889; Active' : '&#127793; New';
+        const statusBadge = prop ? (prop.status === 'verified' ? '<span class="int-badge status-v">&#10003; Verified</span>' : prop.status === 'sold' ? '<span class="int-badge status-s">Sold</span>' : '<span class="int-badge status-p">Pending</span>') : '';
+        const lastClickRel = relativeTime(g.items[0].created_at);
 
-        const logRows = g.items.map(function(i) {
-          const t = new Date(i.created_at);
-          const ts = t.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + t.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        const logRows = g.items.map(function(i, idx) {
           return '<div class="int-log-row">'
-            + '<span class="int-log-time">' + ts + '</span>'
-            + '<button class="int-log-del" onclick="deleteInterest(\'' + i.id + '\')" title="Delete log">&#128465;</button>'
+            + '<div class="int-log-dot' + (idx === 0 ? ' first' : '') + '"></div>'
+            + '<div class="int-log-text">Visitor ' + (g.items.length - idx) + '</div>'
+            + '<div class="int-log-rel">' + relativeTime(i.created_at) + '</div>'
+            + '<button class="int-log-del" onclick="deleteInterest(\'' + i.id + '\')" title="Delete">&#10005;</button>'
             + '</div>';
         }).join('');
 
         return '<div class="int-prop-card">'
-          + '<div class="int-card-head" onclick="toggleIntLogs(\'' + cardId + '\')">' 
-          + '<div class="int-card-left">'
-          + '<div class="int-card-type">' + (prop ? prop.type : 'Property') + '</div>'
+          + '<div class="int-card-accent ' + heat + '"></div>'
+          + '<div class="int-card-body">'
+          + '<div class="int-card-thumb">' + (thumb ? '<img src="' + thumb + '" alt="">' : '&#127968;') + '</div>'
+          + '<div class="int-card-info">'
+          + '<div class="int-card-badges"><span class="int-badge heat-' + heat + '">' + heatLabel + '</span>' + statusBadge + '</div>'
           + '<div class="int-card-name" title="' + label + '">' + label + '</div>'
           + '<div class="int-card-meta">'
-          + (price ? price + ' &nbsp;|&nbsp; ' : '')
-          + 'Last: ' + lastStr
+          + (price ? '<span>&#128178; ' + price + '</span>' : '')
+          + (sizeStr ? '<span>&#9632; ' + sizeStr + '</span>' : '')
+          + '<span>&#128336; ' + lastClickRel + '</span>'
           + '</div>'
           + '</div>'
-          + '<div class="int-card-right">'
-          + '<div class="int-count-badge">' + g.items.length + '</div>'
+          + '<div class="int-count-wrap">'
+          + '<div class="int-count-badge ' + heat + '">' + g.items.length + '</div>'
           + '<div class="int-count-label">clicks</div>'
           + '</div>'
           + '</div>'
-          + '<div class="int-card-actions">'
-          + (propUrl ? '<a class="int-btn-link" href="' + propUrl + '" target="_blank">&#128065; View Listing</a>' : '')
-          + (browseUrl ? '<a class="int-btn-link" href="' + browseUrl + '" target="_blank">&#127758; Live Page</a>' : '')
-          + '<button class="int-expand-toggle" onclick="toggleIntLogs(\'' + cardId + '\')" id="' + cardId + '-btn">&#9660; ' + g.items.length + ' click log' + (g.items.length !== 1 ? 's' : '') + '</button>'
+          + miniChart(g.items)
+          + '<div class="int-card-footer">'
+          + '<div class="int-footer-links">'
+          + (propUrl ? '<a class="int-btn-link" href="' + propUrl + '" target="_blank">&#128065; View</a>' : '')
+          + (prop ? '<a class="int-btn-link" href="https://onlywhitemoneydeals.com/browse-properties?id=' + prop.id + '" target="_blank">&#127758; Live</a>' : '')
+          + '</div>'
+          + '<button class="int-expand-toggle" onclick="toggleIntLogs(\'' + cardId + '\')" id="' + cardId + '-btn">&#9660; ' + g.items.length + ' click' + (g.items.length !== 1 ? 's' : '') + '</button>'
           + '</div>'
           + '<div class="int-logs" id="' + cardId + '">'
-          + logRows
+          + '<div class="int-logs-title">Click History</div>'
+          + '<div class="int-timeline">' + logRows + '</div>'
           + '</div>'
           + '</div>';
       }).join('');
@@ -2340,11 +2651,9 @@
       if (!el) return;
       el.classList.toggle('open');
       const count = el.querySelectorAll('.int-log-row').length;
-      if (el.classList.contains('open')) {
-        btn.innerHTML = '&#9650; Hide logs';
-      } else {
-        btn.innerHTML = '&#9660; ' + count + ' click log' + (count !== 1 ? 's' : '');
-      }
+      btn.innerHTML = el.classList.contains('open')
+        ? '&#9650; Hide history'
+        : '&#9660; ' + count + ' click' + (count !== 1 ? 's' : '');
     }
 
     // Keep old function name for initDashboard compat
