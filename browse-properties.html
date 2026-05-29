@@ -1439,6 +1439,11 @@
     async function refreshListings() {
       await fetchListings();
       applyFilters();
+      // Deep link: auto-open property if ?id= is in the URL
+      const urlId = new URLSearchParams(window.location.search).get('id');
+      if (urlId && allVerifiedListings.find(function(p){ return p.id === urlId; })) {
+        setTimeout(function() { openDetail(urlId); }, 200);
+      }
     }
 
     function resetFilters() {
@@ -1656,6 +1661,7 @@
       const bhk = p.bedrooms > 0 ? p.bedrooms + ' BHK ' : '';
       const price = formatPrice(p.price);
       const sizeStr = p.size ? p.size.toLocaleString() + ' sqft' : '';
+      const propLink = 'https://onlywhitemoneydeals.com/browse-properties?id=' + p.id;
       const lines = [
         'Hi OWMD Team,',
         '',
@@ -1664,6 +1670,7 @@
         'Property: ' + bhk + p.type + ' in ' + p.location,
         'Price: ' + price,
         sizeStr ? 'Size: ' + sizeStr : null,
+        'Link: ' + propLink,
         '',
         'Please share more details and help me connect with the seller.',
         '',
