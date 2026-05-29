@@ -1390,6 +1390,195 @@
       .modal-box {
         border-radius: 14px
       }
+    /* ---- Interest Dashboard ---- */
+    .int-dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 10px;
+      flex-wrap: wrap;
+      gap: 12px
+    }
+    .int-stats-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+    .int-stat-pill {
+      background: var(--purple-bg);
+      color: var(--purple);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid #DDD6FE
+    }
+    .int-stat-pill.today { background: #FFF7ED; color: #C2410C; border-color: #FED7AA }
+    .int-stat-pill.week  { background: #F0FDF4; color: #166534; border-color: #BBF7D0 }
+    .btn-refresh-int {
+      background: var(--purple-bg);
+      border: 1px solid #DDD6FE;
+      color: var(--purple);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s
+    }
+    .btn-refresh-int:hover { background: #EDE9FE }
+    .int-dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      padding: 0 20px 24px
+    }
+    .int-prop-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(107,31,168,0.07);
+      transition: box-shadow 0.2s
+    }
+    .int-prop-card:hover { box-shadow: 0 4px 20px rgba(107,31,168,0.14) }
+    .int-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      cursor: pointer;
+      user-select: none
+    }
+    .int-card-left { flex: 1; min-width: 0 }
+    .int-card-type {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 2px
+    }
+    .int-card-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+    .int-card-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px
+    }
+    .int-card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+      margin-left: 12px
+    }
+    .int-count-badge {
+      background: var(--purple);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 800;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(107,31,168,0.3)
+    }
+    .int-count-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-align: center;
+      margin-top: -4px
+    }
+    .int-card-actions {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px
+    }
+    .int-btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--purple-bg);
+      color: var(--purple);
+      border: 1px solid #DDD6FE;
+      border-radius: 7px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s
+    }
+    .int-btn-link:hover { background: #EDE9FE }
+    .int-expand-toggle {
+      background: #F9FAFB;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: inherit;
+      font-weight: 600;
+      transition: background 0.2s
+    }
+    .int-expand-toggle:hover { background: #F3F4F6 }
+    .int-logs {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 10px 16px 14px
+    }
+    .int-logs.open { display: block }
+    .int-log-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px dashed #F3F4F6;
+      font-size: 0.78rem
+    }
+    .int-log-row:last-child { border-bottom: none }
+    .int-log-time { color: var(--muted) }
+    .int-log-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--red);
+      font-size: 0.82rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s
+    }
+    .int-log-del:hover { background: #FEE2E2 }
+    .int-empty-card {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+      font-size: 0.9rem
+    }
+    @media (max-width: 600px) {
+      .int-dashboard-grid { grid-template-columns: 1fr; padding: 0 12px 20px }
+    }
+
+    @media (max-width: 600px) {
+      .modal-box {
+        border-radius: 14px
+      }
     }
   </style>
 </head>
@@ -1458,28 +1647,14 @@
         </div>
       </div>
       <div class="tab-panel" id="tab-interests">
-        <div class="panel-header">
-          <div class="panel-title">Buyer Interests</div>
-          <div class="search-bar"><input type="text" id="interestSearch" placeholder="Search buyers…"
-              oninput="renderInterests()"></div>
+        <div class="int-dash-header">
+          <div class="panel-title">Interest Dashboard</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div id="intStatsBar" class="int-stats-bar"></div>
+            <button class="btn-refresh-int" onclick="refreshInterests()">&#8635; Refresh</button>
+          </div>
         </div>
-        <div class="table-wrap overflow-x">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Buyer</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Property</th>
-                <th>Message</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="interestsTbody"></tbody>
-          </table>
-        </div>
+        <div id="intDashboard" class="int-dashboard-grid"></div>
       </div>
     </div>
   </div>
@@ -2080,28 +2255,105 @@
       await initDashboard();
     }
 
-    function renderInterests() {
-      const q = (document.getElementById('interestSearch').value || '').toLowerCase();
-      let interests = cachedInterests;
-      if (q) interests = interests.filter(i => (i.buyer_name + i.buyer_phone + (i.property_label || '')).toLowerCase().includes(q));
-      const bc = s => s === 'new' ? 'badge-new' : s === 'contacted' ? 'badge-contacted' : 'badge-closed';
-      const bl = s => s === 'new' ? '🆕 New' : s === 'contacted' ? '✅ Contacted' : '🔒 Closed';
-      const rows = interests.map((i) => `<tr>
-    <td data-label="Buyer"><strong>${i.buyer_name}</strong></td>
-    <td data-label="Phone"><a href="tel:${i.buyer_phone}" style="color:var(--purple)">${i.buyer_phone}</a></td>
-    <td data-label="Email">${i.buyer_email || '—'}</td>
-    <td data-label="Property" title="${i.property_label || ''}">${(i.property_label || '').slice(0, 22)}…</td>
-    <td data-label="Message" title="${i.message || ''}">${(i.message || '—').slice(0, 28)}${i.message && i.message.length > 28 ? '…' : ''}</td>
-    <td data-label="Date">${formatDate(i.created_at)}</td>
-    <td data-label="Status"><span class="status-badge ${bc(i.status || 'new')}">${bl(i.status || 'new')}</span></td>
-    <td data-label="Actions"><div class="action-btns">
-      ${(i.status || 'new') !== 'contacted' ? `<button class="btn-action btn-contact" onclick="contactBuyer('${i.id}')">📞 Contact</button>` : ''}
-      ${(i.status || 'new') !== 'closed' ? `<button class="btn-action btn-close-lead" onclick="closeLead('${i.id}')">Close</button>` : ''}
-      <button class="btn-action btn-delete" onclick="deleteInterest('${i.id}')">🗑</button>
-    </div></td>
-  </tr>`).join('');
-      document.getElementById('interestsTbody').innerHTML = rows || `<tr class="empty-row"><td colspan="8">No buyer interests yet.</td></tr>`;
+    async function refreshInterests() {
+      await fetchInterests();
+      renderInterestsDashboard();
     }
+
+    function renderInterestsDashboard() {
+      const interests = cachedInterests || [];
+      const listings = cachedListings || [];
+
+      // --- Stats bar ---
+      const now = new Date();
+      const todayStr = now.toDateString();
+      const weekAgo = new Date(now - 7 * 864e5);
+      const todayCount = interests.filter(function(i) { return new Date(i.created_at).toDateString() === todayStr; }).length;
+      const weekCount = interests.filter(function(i) { return new Date(i.created_at) >= weekAgo; }).length;
+      document.getElementById('intStatsBar').innerHTML =
+        '<span class="int-stat-pill">Total: ' + interests.length + '</span>' +
+        '<span class="int-stat-pill today">Today: ' + todayCount + '</span>' +
+        '<span class="int-stat-pill week">This Week: ' + weekCount + '</span>';
+
+      if (!interests.length) {
+        document.getElementById('intDashboard').innerHTML = '<div class="int-empty-card">No interest clicks recorded yet. They will appear here when buyers click Express Interest.</div>';
+        return;
+      }
+
+      // --- Group by property_id ---
+      const grouped = {};
+      interests.forEach(function(i) {
+        const key = i.property_id || i.property_label || 'unknown';
+        if (!grouped[key]) grouped[key] = { property_id: i.property_id, label: i.property_label || 'Unknown Property', items: [] };
+        grouped[key].items.push(i);
+      });
+
+      // Sort groups by most interests
+      const groups = Object.values(grouped).sort(function(a, b) { return b.items.length - a.items.length; });
+
+      const cards = groups.map(function(g) {
+        const prop = listings.find(function(l) { return l.id === g.property_id; });
+        const label = prop ? (prop.type + ' in ' + prop.location) : g.label;
+        const price = prop ? formatPrice(prop.price) : '';
+        const propUrl = prop ? ('browse-properties.html?id=' + prop.id) : null;
+        const browseUrl = prop ? ('https://onlywhitemoneydeals.com/browse-properties?id=' + prop.id) : null;
+        const lastClick = new Date(g.items[0].created_at);
+        const lastStr = lastClick.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + lastClick.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        const cardId = 'intcard-' + (g.property_id || 'x').replace(/[^a-z0-9]/gi, '');
+
+        const logRows = g.items.map(function(i) {
+          const t = new Date(i.created_at);
+          const ts = t.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + t.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+          return '<div class="int-log-row">'
+            + '<span class="int-log-time">' + ts + '</span>'
+            + '<button class="int-log-del" onclick="deleteInterest(\'' + i.id + '\')" title="Delete log">&#128465;</button>'
+            + '</div>';
+        }).join('');
+
+        return '<div class="int-prop-card">'
+          + '<div class="int-card-head" onclick="toggleIntLogs(\'' + cardId + '\')">' 
+          + '<div class="int-card-left">'
+          + '<div class="int-card-type">' + (prop ? prop.type : 'Property') + '</div>'
+          + '<div class="int-card-name" title="' + label + '">' + label + '</div>'
+          + '<div class="int-card-meta">'
+          + (price ? price + ' &nbsp;|&nbsp; ' : '')
+          + 'Last: ' + lastStr
+          + '</div>'
+          + '</div>'
+          + '<div class="int-card-right">'
+          + '<div class="int-count-badge">' + g.items.length + '</div>'
+          + '<div class="int-count-label">clicks</div>'
+          + '</div>'
+          + '</div>'
+          + '<div class="int-card-actions">'
+          + (propUrl ? '<a class="int-btn-link" href="' + propUrl + '" target="_blank">&#128065; View Listing</a>' : '')
+          + (browseUrl ? '<a class="int-btn-link" href="' + browseUrl + '" target="_blank">&#127758; Live Page</a>' : '')
+          + '<button class="int-expand-toggle" onclick="toggleIntLogs(\'' + cardId + '\')" id="' + cardId + '-btn">&#9660; ' + g.items.length + ' click log' + (g.items.length !== 1 ? 's' : '') + '</button>'
+          + '</div>'
+          + '<div class="int-logs" id="' + cardId + '">'
+          + logRows
+          + '</div>'
+          + '</div>';
+      }).join('');
+
+      document.getElementById('intDashboard').innerHTML = cards;
+    }
+
+    function toggleIntLogs(cardId) {
+      const el = document.getElementById(cardId);
+      const btn = document.getElementById(cardId + '-btn');
+      if (!el) return;
+      el.classList.toggle('open');
+      const count = el.querySelectorAll('.int-log-row').length;
+      if (el.classList.contains('open')) {
+        btn.innerHTML = '&#9650; Hide logs';
+      } else {
+        btn.innerHTML = '&#9660; ' + count + ' click log' + (count !== 1 ? 's' : '');
+      }
+    }
+
+    // Keep old function name for initDashboard compat
+    function renderInterests() { renderInterestsDashboard(); }
 
     async function contactBuyer(id) {
       const i = cachedInterests.find(x => x.id === id); if (!i) return;
