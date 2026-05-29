@@ -1288,8 +1288,7 @@
           <a href="list-property.html"
             style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.92rem;text-decoration:none;box-shadow:0 4px 16px rgba(107,31,168,0.3);transition:all 0.3s">🏠
             List My Property</a>
-          <a href="https://wa.me/919910805491?text=Hi%20OWMD%2C%20I%20want%20to%20buy%20a%20property%20in%20pure%20white%20money.%20Please%20reach%20out%20when%20you%20find%20a%20match."
-            target="_blank" rel="noopener"
+          <a href="#" class="owmd-dynamic-wa" data-msg="Hi OWMD, I want to buy a property in pure white money. Please reach out when you find a match."
             style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.92rem;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,0.3);transition:all 0.3s">💬
             I Want to Buy</a>
         </div>
@@ -1300,8 +1299,7 @@
         <h3>No properties found</h3>
         <p>Try adjusting your filters or <a href="list-property.html" style="color:var(--purple);font-weight:600">list a
             property</a>.</p>
-        <a href="https://wa.me/919910805491?text=Hi%20OWMD%2C%20I%20couldn't%20find%20a%20matching%20property.%20Can%20you%20help%3F"
-          target="_blank" rel="noopener"
+        <a href="#" class="owmd-dynamic-wa" data-msg="Hi OWMD, I couldn't find a matching property. Can you help?"
           style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:12px 24px;border-radius:10px;font-weight:700;font-size:0.88rem;margin-top:16px">&#128172;
           Tell Us Your Requirement</a>
       </div>
@@ -1667,7 +1665,10 @@
       ].filter(function (l) { return l !== null && l !== undefined; });
 
       const waText = encodeURIComponent(lines.join('\n'));
-      window.open('https://wa.me/919910805491?text=' + waText, '_blank');
+      const p1 = '99108';
+      const p2 = '05491';
+      const num = '91' + p1 + p2;
+      window.open('https://wa.me/' + num + '?text=' + waText, '_blank');
 
       // Silently log to Supabase (fire-and-forget)
       supabaseClient.from('buyer_interests').insert([{
@@ -1711,7 +1712,7 @@
         all 100% white money, fully documented transactions. Browse <strong>2BHK and 3BHK flats in Ghaziabad</strong>,
         plots, builder floors, and
         commercial properties. No black money, no under-registration, no Income Tax risk.
-        Call <a href="tel:+919910805491" style="color:#6B1FA8;font-weight:600;">+91 99108 05491</a> or
+        Call <a href="#" class="owmd-dynamic-tel" style="color:#6B1FA8;font-weight:600;">+91 99108 05491</a> or
         <a href="list-property.html" style="color:#6B1FA8;font-weight:600;">list your property</a> today.
       </p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">

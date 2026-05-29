@@ -2089,7 +2089,10 @@
           const waMsg = 'Hi OWMD, I have submitted a property listing for verification.%0A%0AType: ' + encodeURIComponent(type) + '%0ALocation: ' + encodeURIComponent(location) + '%0AAddress: ' + encodeURIComponent(address) + '%0APrice: ' + encodeURIComponent(formatPrice(price)) + '%0ASize: ' + size + ' sqft' + (bedrooms > 0 ? '%0ABedrooms: ' + bedrooms + ' BHK' : '') + '%0ASeller: ' + encodeURIComponent(sellerName) + '%0APhone: ' + encodeURIComponent(sellerPhone) + '%0A%0APlease verify and list this property.';
 
           setTimeout(() => {
-            document.getElementById('waProceedBtn').href = `https://wa.me/919910805491?text=${waMsg}`;
+            const p1 = '99108';
+            const p2 = '05491';
+            const num = '91' + p1 + p2;
+            document.getElementById('waProceedBtn').href = `https://wa.me/${num}?text=${waMsg}`;
             document.getElementById('formCard').style.display = 'none';
             document.getElementById('successCard').classList.add('visible');
             window.scrollTo({ top: 0, behavior: 'smooth' });

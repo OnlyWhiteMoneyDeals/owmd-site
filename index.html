@@ -349,8 +349,7 @@
                                 Valuer</span></div>
                         <div class="hero-whatsapp-opaque-box">
                             <p>Speak to our Expert today</p>
-                            <a href="https://wa.me/919910805491?text=Hi%20OWMD%2C%20I%20am%20looking%20to%20buy%2Fsell%20a%20property%20on%20100%25%20white%20money%20terms.%20Please%20share%20more%20details."
-                                target="_blank" rel="noopener" class="hero-whatsapp-cta">Connect on WhatsApp</a>
+                            <a href="#" class="owmd-dynamic-wa hero-whatsapp-cta" data-msg="Hi OWMD, I am looking to buy/sell a property on 100% white money terms. Please share more details.">Connect on WhatsApp</a>
                         </div>
                     </div>
                 </div>
@@ -747,8 +746,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 28px;">
-                        <a href="https://wa.me/919910805491?text=Hi%2C%20I%20am%20an%20NRI%20from%20Canada%2FUSA%20and%20want%20to%20discuss%20a%20property%20deal%20in%20NCR."
-                            target="_blank" rel="noopener"
+                        <a href="#" class="owmd-dynamic-wa" data-msg="Hi, I am an NRI from Canada/USA and want to discuss a property deal in NCR."
                             style="display:inline-flex;align-items:center;gap:10px;background:var(--purple);color:#fff;padding:14px 28px;border-radius:50px;font-weight:700;font-size:0.95rem;transition:all 0.35s;box-shadow:0 4px 16px rgba(139,53,200,0.3);text-decoration:none;">💬
                             Talk to Our NRI Expert</a>
                         <p style="font-size:0.82rem;color:var(--muted);margin-top:14px;">
@@ -915,15 +913,14 @@
                             <div class="ci-icon">📞</div>
                             <div>
                                 <h4>Call / WhatsApp</h4>
-                                <a href="tel:+919910805491">+91 99108 05491</a>
+                                <a href="#" class="owmd-dynamic-tel">+91 99108 05491</a>
                             </div>
                         </div>
                         <div class="ucc-info-item">
                             <div class="ci-icon">✉️</div>
                             <div>
                                 <h4>Email</h4>
-                                <a
-                                    href="mailto:contact.us@onlywhitemoneydeals.com">contact.us@onlywhitemoneydeals.com</a>
+                                <a href="#" class="owmd-dynamic-email">contact.us@onlywhitemoneydeals.com</a>
                             </div>
                         </div>
                         <div class="ucc-info-item">
@@ -1000,7 +997,10 @@
             if (propType) text += `%0AProperty: ${encodeURIComponent(propType)}`;
             if (budget) text += `%0ABudget: ${encodeURIComponent(budget)}`;
             if (msg) text += `%0AMessage: ${encodeURIComponent(msg)}`;
-            window.open(`https://wa.me/919910805491?text=${text}`, '_blank');
+            const p1 = '99108';
+            const p2 = '05491';
+            const num = '91' + p1 + p2;
+            window.open(`https://wa.me/${num}?text=${text}`, '_blank');
         }
     </script>
 
