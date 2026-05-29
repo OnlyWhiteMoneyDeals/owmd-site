@@ -27,8 +27,7 @@
     <link rel="stylesheet" href="css/style.min.css">
   </noscript>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places"></script>
   <link rel="icon" type="image/png" href="assets/logo1.png">
   <style>
     :root {
@@ -1560,79 +1559,71 @@
           : (NCR_COORDS[p.location] || NCR_COORDS['Others']);
         const mapLink = document.getElementById('detailMapLink');
         if (mapLink) {
-          mapLink.href = 'https://www.openstreetmap.org/?mlat=' + coords.lat + '&mlon=' + coords.lon + '#map=' + coords.zoom + '/' + coords.lat + '/' + coords.lon;
+          mapLink.href = 'https://www.google.com/maps/search/?api=1&query=' + coords.lat + ',' + coords.lon;
         }
         // Small delay to ensure DOM is ready
         setTimeout(function () {
           const mapEl = document.getElementById('detailMapEl');
           if (!mapEl) return;
-          if (detailMap) {
-            detailMap.remove();
-            detailMap = null;
-            detailMarker = null;
-          }
-          detailMap = L.map('detailMapEl', { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
-          detailMap.setView([coords.lat, coords.lon], coords.zoom);
-          // Layer definitions
-          const layers = {
-            map: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-              subdomains: 'abcd', maxZoom: 19
-            }),
-            satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community',
-              maxZoom: 19
-            }),
-            hybrid: L.layerGroup([
-              L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community',
-                maxZoom: 19
-              }),
-              L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 19, opacity: 0.9
-              })
-            ])
-          };
-          let activeLayer = 'map';
-          layers.map.addTo(detailMap);
+          mapEl.innerHTML = ''; // Clear container
 
-          // Layer toggle control
-          const layerCtrl = L.control({ position: 'topright' });
-          layerCtrl.onAdd = function () {
-            const div = L.DomUtil.create('div', 'map-layer-toggle');
-            div.innerHTML = `
-              <button class="mlt-btn mlt-active" onclick="switchDetailLayer('map',this)">&#128506; Map</button>
-              <button class="mlt-btn" onclick="switchDetailLayer('satellite',this)">&#128752; Satellite</button>
-              <button class="mlt-btn" onclick="switchDetailLayer('hybrid',this)">&#127758; Hybrid</button>
-            `;
-            L.DomEvent.disableClickPropagation(div);
-            return div;
-          };
-          layerCtrl.addTo(detailMap);
-          window._detailMapLayers = layers;
-          window._detailMap = detailMap;
-          // Custom purple marker
-          const purpleIcon = L.divIcon({
-            html: '<div style="width:28px;height:28px;background:linear-gradient(135deg,#6B1FA8,#8B5CF6);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 12px rgba(107,31,168,0.5)"></div>',
-            className: '',
-            iconSize: [28, 28],
-            iconAnchor: [14, 28]
+          detailMap = new google.maps.Map(mapEl, {
+            center: { lat: coords.lat, lng: coords.lon },
+            zoom: coords.zoom,
+            mapTypeId: 'roadmap',
+            disableDefaultUI: true,
+            zoomControl: true
           });
-          detailMarker = L.marker([coords.lat, coords.lon], { icon: purpleIcon }).addTo(detailMap);
+
+          // Custom toggle controls inside Map
+          const toggleDiv = document.createElement('div');
+          toggleDiv.className = 'map-layer-toggle';
+          toggleDiv.style.margin = '10px';
+          toggleDiv.innerHTML = `
+            <button class="mlt-btn mlt-active" onclick="switchDetailLayer('roadmap',this)">&#128506; Map</button>
+            <button class="mlt-btn" onclick="switchDetailLayer('satellite',this)">&#128752; Satellite</button>
+            <button class="mlt-btn" onclick="switchDetailLayer('hybrid',this)">&#127758; Hybrid</button>
+          `;
+          detailMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(toggleDiv);
+          window._detailMap = detailMap;
+
+          // Custom branded purple marker pin
+          const pinSvg = 'data:image/svg+xml;utf-8,' + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M16 3C10.48 3 6 7.48 6 13c0 7 10 16 10 16s10-9 10-16c0-5.52-4.48-10-10-10zm0 14c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="#6B1FA8" stroke="#ffffff" stroke-width="2"/>
+            </svg>
+          `);
+
+          detailMarker = new google.maps.Marker({
+            position: { lat: coords.lat, lng: coords.lon },
+            map: detailMap,
+            icon: {
+              url: pinSvg,
+              size: new google.maps.Size(32, 32),
+              anchor: new google.maps.Point(16, 32)
+            }
+          });
+
           const popupText = hasExact
             ? '<strong>' + p.location + '</strong><br><span style="font-size:0.75rem;color:#059669">&#10003; Exact property location</span>'
             : '<strong>' + p.location + '</strong><br><span style="font-size:0.75rem;color:#6B7280">Approximate area shown</span>';
-          detailMarker.bindPopup(popupText, { closeButton: false }).openPopup();
+
+          const infoWindow = new google.maps.InfoWindow({
+            content: '<div style="color: #333; font-family: sans-serif; font-size: 13px; line-height: 1.4;">' + popupText + '</div>'
+          });
+          infoWindow.open(detailMap, detailMarker);
+
+          detailMarker.addListener('click', function () {
+            infoWindow.open(detailMap, detailMarker);
+          });
         }, 80);
       });
     }
 
     function switchDetailLayer(name, btn) {
       const m = window._detailMap;
-      const ls = window._detailMapLayers;
-      if (!m || !ls) return;
-      Object.values(ls).forEach(l => m.removeLayer(l));
-      ls[name].addTo(m);
+      if (!m) return;
+      m.setMapTypeId(name);
       document.querySelectorAll('.mlt-btn').forEach(b => b.classList.remove('mlt-active'));
       btn.classList.add('mlt-active');
     }

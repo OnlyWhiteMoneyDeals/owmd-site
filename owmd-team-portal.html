@@ -10,10 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700;900&display=swap"
     rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/logo1.png">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -2676,8 +2673,9 @@
       await initDashboard();
     }
 
-    // Address Autocomplete shared (same as list-property.html)
     var _addrTimer = null, _addrCoords = {};
+    let autocompleteService = null, placesServiceInstance = null;
+
     function addrInput(input, dropId, linkId) {
       clearTimeout(_addrTimer);
       var q = input.value.trim(), drop = document.getElementById(dropId);
@@ -2687,40 +2685,70 @@
       drop.style.display = 'block';
       _addrTimer = setTimeout(function () { fetchAddrSugg(q, input, drop, linkId); }, 500);
     }
-    const NCR_VIEWBOX_P = '76.80,28.30,77.85,29.00';
+
     function fetchAddrSugg(q, input, drop, linkId) {
-      var params = new URLSearchParams({ q: q, format: 'json', addressdetails: '1', countrycodes: 'in', viewbox: NCR_VIEWBOX_P, bounded: '0', limit: '7', dedupe: '1', 'accept-language': 'en' });
-      fetch('https://nominatim.openstreetmap.org/search?' + params.toString(), { headers: { 'Accept-Language': 'en' } })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (!data || !data.length) { drop.innerHTML = '<div class="addr-loading">No results. Use 📍 map pin.</div>'; return; }
-          drop.innerHTML = data.map(function (f) {
-            var a = f.address || {};
-            var name = f.name || a.amenity || a.building || '';
-            var road = a.road || a.pedestrian || '';
-            var suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
-            var city = a.city || a.county || a.state_district || '';
-            var state = a.state || '';
-            var main = name || road || suburb || city || f.display_name.split(',')[0];
-            var sub = [road && name ? road : '', suburb, city, state].filter(Boolean).join(', ');
-            var full = [name, road, suburb, city, state, a.postcode, 'India'].filter(Boolean).join(', ');
-            var lat = parseFloat(f.lat), lon = parseFloat(f.lon);
-            return '<div class="addr-item" data-full="' + encodeURIComponent(full) + '" data-lat="' + lat + '" data-lon="' + lon + '" data-input="' + input.id + '" data-link="' + linkId + '" data-drop="' + drop.id + '" onmousedown="pickAddr(this)">'
-              + '<span class="addr-item-pin">📍</span>'
-              + '<div><div class="addr-item-main">' + main + '</div><div class="addr-item-sub">' + sub + '</div></div></div>';
-          }).join('');
-        }).catch(function () { drop.innerHTML = '<div class="addr-loading">Error. Type address manually.</div>'; });
+      if (!autocompleteService) {
+        autocompleteService = new google.maps.places.AutocompleteService();
+      }
+
+      const ncrBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(28.30, 76.80),
+        new google.maps.LatLng(29.00, 77.85)
+      );
+
+      autocompleteService.getPlacePredictions({
+        input: q,
+        componentRestrictions: { country: 'in' },
+        locationBias: ncrBounds
+      }, function (predictions, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions || !predictions.length) {
+          drop.innerHTML = '<div class="addr-loading">No results. Use 📍 map pin.</div>';
+          return;
+        }
+
+        drop.innerHTML = predictions.map(function (pred) {
+          const main = pred.structured_formatting.main_text;
+          const sub = pred.structured_formatting.secondary_text || '';
+          const full = pred.description;
+
+          return '<div class="addr-item" data-place-id="' + pred.place_id + '" data-full="' + encodeURIComponent(full) + '" data-input="' + input.id + '" data-link="' + linkId + '" data-drop="' + drop.id + '" onmousedown="pickGooglePlace(this)" tabindex="-1">'
+            + '<span class="addr-item-pin">📍</span>'
+            + '<div><div class="addr-item-main">' + main + '</div><div class="addr-item-sub">' + sub + '</div></div></div>';
+        }).join('');
+      });
     }
-    function pickAddr(el) {
-      var full = decodeURIComponent(el.dataset.full);
-      var lat = parseFloat(el.dataset.lat), lon = parseFloat(el.dataset.lon);
-      var input = document.getElementById(el.dataset.input);
-      var drop = document.getElementById(el.dataset.drop);
-      var link = document.getElementById(el.dataset.link);
+
+    function pickGooglePlace(el) {
+      const placeId = el.dataset.placeId;
+      const full = decodeURIComponent(el.dataset.full);
+      const input = document.getElementById(el.dataset.input);
+      const drop = document.getElementById(el.dataset.drop);
+      const link = document.getElementById(el.dataset.link);
+
       if (input) input.value = full;
       if (drop) drop.style.display = 'none';
-      if (link) { link.href = 'https://maps.google.com/?q=' + lat + ',' + lon; link.style.display = 'inline-block'; }
-      if (input) _addrCoords[input.id] = { lat: lat, lon: lon };
+
+      if (!placesServiceInstance) {
+        placesServiceInstance = new google.maps.places.PlacesService(document.createElement('div'));
+      }
+
+      placesServiceInstance.getDetails({
+        placeId: placeId,
+        fields: ['geometry', 'formatted_address']
+      }, function (place, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK && place.geometry && place.geometry.location) {
+          const lat = place.geometry.location.lat();
+          const lon = place.geometry.location.lng();
+
+          if (link) {
+            link.href = 'https://maps.google.com/?q=' + lat + ',' + lon;
+            link.style.display = 'inline-block';
+          }
+
+          // store coords for later use
+          if (input) _addrCoords[input.id] = { lat: lat, lon: lon };
+        }
+      });
     }
     document.addEventListener('click', function (e) {
       document.querySelectorAll('.addr-suggestions').forEach(function (d) {
@@ -2733,7 +2761,7 @@
     document.getElementById('addModal').addEventListener('click', e => { if (e.target.id === 'addModal') closeAddModal() });
     document.getElementById('mapPickerModal').addEventListener('click', e => { if (e.target.id === 'mapPickerModal') closeMapPicker() });
 
-    // ── Leaflet Map Picker logic ──────────
+    // ── Google Maps Map Picker logic ──────────
     let pickerMap = null, pickerMarker = null, pickedCoords = null, pickedAddress = "", targetInputId = "", targetLinkId = "";
 
     function openMapPicker(inputId, linkId) {
@@ -2744,77 +2772,61 @@
       pickedCoords = null; pickedAddress = "";
 
       if (!pickerMap) {
-        // Initial NCR bias
-        pickerMap = L.map('mapPickerDiv').setView([28.6, 77.3], 11);
-        const _pLayers = {
-          map: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd', maxZoom: 19
-          }),
-          satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community',
-            maxZoom: 19
-          }),
-          hybrid: L.layerGroup([
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USGS, USDA &amp; GIS community', maxZoom: 19
-            }),
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-              maxZoom: 19, opacity: 0.9
-            })
-          ])
-        };
-        _pLayers.map.addTo(pickerMap);
-        window._pickerLayers = _pLayers;
+        pickerMap = new google.maps.Map(document.getElementById('mapPickerDiv'), {
+          center: { lat: 28.6, lng: 77.3 },
+          zoom: 11,
+          mapTypeId: 'roadmap',
+          disableDefaultUI: true,
+          zoomControl: true
+        });
 
-        const pLayerCtrl = L.control({ position: 'topright' });
-        pLayerCtrl.onAdd = function () {
-          const div = L.DomUtil.create('div', 'map-layer-toggle');
-          div.innerHTML = `
-            <button class="mlt-btn mlt-active" onclick="switchPickerLayer('map',this)">&#128506; Map</button>
-            <button class="mlt-btn" onclick="switchPickerLayer('satellite',this)">&#128752; Satellite</button>
-            <button class="mlt-btn" onclick="switchPickerLayer('hybrid',this)">&#127758; Hybrid</button>
-          `;
-          L.DomEvent.disableClickPropagation(div);
-          return div;
-        };
-        pLayerCtrl.addTo(pickerMap);
+        // Layer switch controls inside picker Map
+        const toggleDiv = document.createElement('div');
+        toggleDiv.className = 'map-layer-toggle';
+        toggleDiv.style.margin = '10px';
+        toggleDiv.innerHTML = `
+          <button class="mlt-btn mlt-active" onclick="switchPickerLayer('roadmap',this)">&#128506; Map</button>
+          <button class="mlt-btn" onclick="switchPickerLayer('satellite',this)">&#128752; Satellite</button>
+          <button class="mlt-btn" onclick="switchPickerLayer('hybrid',this)">&#127758; Hybrid</button>
+        `;
+        pickerMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(toggleDiv);
 
-        pickerMap.on('click', function (e) {
-          const lat = e.latlng.lat, lon = e.latlng.lng;
-          if (pickerMarker) pickerMarker.setLatLng([lat, lon]);
-          else pickerMarker = L.marker([lat, lon]).addTo(pickerMap);
+        pickerMap.addListener('click', function (e) {
+          const lat = e.latLng.lat();
+          const lon = e.latLng.lng();
+          if (pickerMarker) {
+            pickerMarker.setPosition({ lat, lng: lon });
+          } else {
+            pickerMarker = new google.maps.Marker({
+              position: { lat, lng: lon },
+              map: pickerMap
+            });
+          }
 
           pickedCoords = { lat, lon };
           document.getElementById('mapLoadingOverlay').style.display = 'flex';
 
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
-            .then(r => r.json()).then(data => {
-              document.getElementById('mapLoadingOverlay').style.display = 'none';
-              if (data && data.display_name) {
-                pickedAddress = data.display_name;
-                document.getElementById('mapPickedAddrText').textContent = pickedAddress;
-                document.getElementById('btnConfirmMap').disabled = false;
-              } else {
-                document.getElementById('mapPickedAddrText').textContent = "Unknown location. Please try again.";
-                document.getElementById('btnConfirmMap').disabled = true;
-              }
-            }).catch(() => {
-              document.getElementById('mapLoadingOverlay').style.display = 'none';
-              document.getElementById('mapPickedAddrText').textContent = "Error fetching address. Try again.";
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng: lon } }, function (results, status) {
+            document.getElementById('mapLoadingOverlay').style.display = 'none';
+            if (status === 'OK' && results[0]) {
+              pickedAddress = results[0].formatted_address;
+              document.getElementById('mapPickedAddrText').textContent = pickedAddress;
+              document.getElementById('btnConfirmMap').disabled = false;
+            } else {
+              document.getElementById('mapPickedAddrText').textContent = "Unknown location. Please try again.";
               document.getElementById('btnConfirmMap').disabled = true;
-            });
+            }
+          });
         });
       } else {
-        setTimeout(() => pickerMap.invalidateSize(), 100);
+        google.maps.event.trigger(pickerMap, 'resize');
       }
     }
 
     function switchPickerLayer(name, btn) {
-      const ls = window._pickerLayers;
-      if (!pickerMap || !ls) return;
-      Object.values(ls).forEach(l => pickerMap.removeLayer(l));
-      ls[name].addTo(pickerMap);
+      if (!pickerMap) return;
+      pickerMap.setMapTypeId(name);
       document.querySelectorAll('.map-layer-toggle .mlt-btn').forEach(b => b.classList.remove('mlt-active'));
       btn.classList.add('mlt-active');
     }
@@ -2841,53 +2853,98 @@
     }
 
     function fetchMapSearch(q) {
-      const params = new URLSearchParams({ q: q, format: 'json', addressdetails: '1', countrycodes: 'in', viewbox: '76.80,28.30,77.85,29.00', bounded: '0', limit: '7', dedupe: '1', 'accept-language': 'en' });
-      fetch('https://nominatim.openstreetmap.org/search?' + params.toString(), { headers: { 'Accept-Language': 'en' } })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          const drop = document.getElementById('mapSearchDrop');
-          if (!data || !data.length) { drop.innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">No results found</div>'; return; }
-          drop.innerHTML = data.map(function (f) {
-            const a = f.address || {};
-            const name = f.name || a.amenity || a.building || a.tourism || '';
-            const road = a.road || a.pedestrian || '';
-            const suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
-            const city = a.city || a.county || a.state_district || '';
-            const main = name || road || suburb || city || f.display_name.split(',')[0];
-            const sub = [road && name ? road : '', suburb, city, a.state].filter(Boolean).join(', ');
-            return '<div class="map-search-item" data-lat="' + f.lat + '" data-lon="' + f.lon + '" data-display="' + encodeURIComponent(f.display_name) + '" onmousedown="pickMapResult(this)">'
-              + '<span>📍</span><div><div class="map-search-item-main">' + main + '</div><div class="map-search-item-sub">' + sub + '</div></div></div>';
-          }).join('');
-          _mapSearchIdx = -1;
-        }).catch(function () {
-          document.getElementById('mapSearchDrop').innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">Connection error.</div>';
-        });
+      if (!autocompleteService) {
+        autocompleteService = new google.maps.places.AutocompleteService();
+      }
+
+      const ncrBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(28.30, 76.80),
+        new google.maps.LatLng(29.00, 77.85)
+      );
+
+      autocompleteService.getPlacePredictions({
+        input: q,
+        componentRestrictions: { country: 'in' },
+        locationBias: ncrBounds
+      }, function (predictions, status) {
+        const drop = document.getElementById('mapSearchDrop');
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions || !predictions.length) {
+          drop.innerHTML = '<div class="map-search-item" style="color:var(--muted);cursor:default">No results found</div>';
+          return;
+        }
+
+        drop.innerHTML = predictions.map(function (pred) {
+          const main = pred.structured_formatting.main_text;
+          const sub = pred.structured_formatting.secondary_text || '';
+          const full = pred.description;
+
+          return '<div class="map-search-item" data-place-id="' + pred.place_id + '" data-display="' + encodeURIComponent(full) + '" onmousedown="pickMapResult(this)">'
+            + '<span>📍</span>'
+            + '<div><div class="map-search-item-main">' + main + '</div><div class="map-search-item-sub">' + sub + '</div></div></div>';
+        }).join('');
+        _mapSearchIdx = -1;
+      });
     }
 
     function pickMapResult(el) {
-      const lat = parseFloat(el.dataset.lat), lon = parseFloat(el.dataset.lon);
+      const placeId = el.dataset.placeId;
       const displayName = decodeURIComponent(el.dataset.display);
-      if (pickerMap) {
-        pickerMap.setView([lat, lon], 17);
-        if (pickerMarker) pickerMarker.setLatLng([lat, lon]);
-        else pickerMarker = L.marker([lat, lon]).addTo(pickerMap);
-        pickedCoords = { lat, lon };
-        pickedAddress = displayName;
-        document.getElementById('mapPickedAddrText').textContent = displayName;
-        document.getElementById('btnConfirmMap').disabled = false;
+
+      if (!placesServiceInstance) {
+        placesServiceInstance = new google.maps.places.PlacesService(document.createElement('div'));
       }
+
+      placesServiceInstance.getDetails({
+        placeId: placeId,
+        fields: ['geometry', 'formatted_address']
+      }, function (place, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK && place.geometry && place.geometry.location) {
+          const lat = place.geometry.location.lat();
+          const lon = place.geometry.location.lng();
+
+          if (pickerMap) {
+            pickerMap.setCenter({ lat, lng: lon });
+            pickerMap.setZoom(17);
+            if (pickerMarker) {
+              pickerMarker.setPosition({ lat, lng: lon });
+            } else {
+              pickerMarker = new google.maps.Marker({
+                position: { lat, lng: lon },
+                map: pickerMap
+              });
+            }
+            pickedCoords = { lat, lon };
+            pickedAddress = place.formatted_address || displayName;
+            document.getElementById('mapPickedAddrText').textContent = pickedAddress;
+            document.getElementById('btnConfirmMap').disabled = false;
+          }
+        }
+      });
+
       document.getElementById('mapSearchDrop').classList.remove('open');
       document.getElementById('mapSearchInput').value = el.querySelector('.map-search-item-main').textContent;
     }
 
     function mapSearchKeyNav(e) {
       const drop = document.getElementById('mapSearchDrop');
-      const items = Array.from(drop.querySelectorAll('[data-lat]'));
+      const items = Array.from(drop.querySelectorAll('[data-place-id]'));
       if (!items.length) return;
-      if (e.key === 'ArrowDown') { e.preventDefault(); _mapSearchIdx = Math.min(_mapSearchIdx+1, items.length-1); items.forEach(function(el,i){el.classList.toggle('msi-focused',i===_mapSearchIdx);}); if(items[_mapSearchIdx])items[_mapSearchIdx].scrollIntoView({block:'nearest'}); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); _mapSearchIdx = Math.max(_mapSearchIdx-1, 0); items.forEach(function(el,i){el.classList.toggle('msi-focused',i===_mapSearchIdx);}); if(items[_mapSearchIdx])items[_mapSearchIdx].scrollIntoView({block:'nearest'}); }
-      else if (e.key === 'Enter' && _mapSearchIdx >= 0) { e.preventDefault(); items[_mapSearchIdx].dispatchEvent(new MouseEvent('mousedown')); }
-      else if (e.key === 'Escape') { drop.classList.remove('open'); }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        _mapSearchIdx = Math.min(_mapSearchIdx + 1, items.length - 1);
+        items.forEach(function (el, i) { el.classList.toggle('msi-focused', i === _mapSearchIdx); });
+        if (items[_mapSearchIdx]) items[_mapSearchIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        _mapSearchIdx = Math.max(_mapSearchIdx - 1, 0);
+        items.forEach(function (el, i) { el.classList.toggle('msi-focused', i === _mapSearchIdx); });
+        if (items[_mapSearchIdx]) items[_mapSearchIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter' && _mapSearchIdx >= 0) {
+        e.preventDefault();
+        items[_mapSearchIdx].dispatchEvent(new MouseEvent('mousedown'));
+      } else if (e.key === 'Escape') {
+        drop.classList.remove('open');
+      }
     }
 
     document.addEventListener('click', function(e) {
