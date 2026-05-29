@@ -26,7 +26,8 @@
     <link rel="stylesheet" href="css/style.min.css">
   </noscript>
   <link rel="icon" type="image/png" href="assets/logo1.png">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -583,7 +584,7 @@
       outline: none;
       border-color: var(--purple);
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(107,31,168,0.1)
+      box-shadow: 0 0 0 3px rgba(107, 31, 168, 0.1)
     }
 
     .map-search-drop {
@@ -598,7 +599,7 @@
       z-index: 10000;
       max-height: 220px;
       overflow-y: auto;
-      box-shadow: 0 8px 24px rgba(107,31,168,0.15);
+      box-shadow: 0 8px 24px rgba(107, 31, 168, 0.15);
       scrollbar-width: thin
     }
 
@@ -642,13 +643,14 @@
     .map-layer-toggle {
       display: flex;
       gap: 2px;
-      background: rgba(255,255,255,0.92);
+      background: rgba(255, 255, 255, 0.92);
       border-radius: 8px;
       padding: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
       backdrop-filter: blur(4px);
-      border: 1px solid rgba(0,0,0,0.1)
+      border: 1px solid rgba(0, 0, 0, 0.1)
     }
+
     .mlt-btn {
       background: none;
       border: none;
@@ -662,8 +664,16 @@
       transition: all 0.2s;
       white-space: nowrap
     }
-    .mlt-btn:hover { background: #F3F4F6 }
-    .mlt-btn.mlt-active { background: #6B1FA8; color: #fff; box-shadow: 0 2px 6px rgba(107,31,168,0.35) }
+
+    .mlt-btn:hover {
+      background: #F3F4F6
+    }
+
+    .mlt-btn.mlt-active {
+      background: #6B1FA8;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(107, 31, 168, 0.35)
+    }
 
     .map-modal-header {
       padding: 16px 20px;
@@ -1059,7 +1069,7 @@
       z-index: 600;
       max-height: 280px;
       overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(107,31,168,0.18);
+      box-shadow: 0 8px 32px rgba(107, 31, 168, 0.18);
       scrollbar-width: thin
     }
 
@@ -1195,15 +1205,14 @@
               </div>
               <div class="form-group" style="position:relative">
                 <label>Location / Area <span class="req">*</span></label>
-                <input type="text" id="propLocationSearch"
-                  placeholder="Type sector, locality, society area..."
-                  autocomplete="off"
-                  oninput="filterLocations(this.value)"
-                  onfocus="filterLocations(this.value)"
+                <input type="text" id="propLocationSearch" placeholder="Type sector, locality, society area..."
+                  autocomplete="off" oninput="filterLocations(this.value)" onfocus="filterLocations(this.value)"
                   onkeydown="locKeyNav(event)">
                 <div class="loc-drop" id="locDrop"></div>
                 <input type="hidden" id="propLocation">
-                <div id="locTag" style="display:none;margin-top:6px;display:none;align-items:center;gap:6px;font-size:0.8rem;font-weight:600;color:var(--purple)"></div>
+                <div id="locTag"
+                  style="display:none;margin-top:6px;display:none;align-items:center;gap:6px;font-size:0.8rem;font-weight:600;color:var(--purple)">
+                </div>
               </div>
             </div>
             <div class="form-row">
@@ -1248,8 +1257,6 @@
               </div>
               <a class="addr-map-link" id="propAddrMapLink" href="#" target="_blank" rel="noopener">&#128205; Preview on
                 Google Maps</a>
-              <div style="font-size:0.76rem;color:var(--muted);margin-top:4px">&#128274; Visible only to OWMD team
-                &mdash; not shown to buyers.</div>
             </div>
 
             <div class="form-section-title" style="margin-top:24px">
@@ -1351,11 +1358,8 @@
       <!-- Map Search Bar -->
       <div class="map-search-bar" style="position:relative">
         <span class="map-search-icon">&#128269;</span>
-        <input type="text" id="mapSearchInput"
-          placeholder="Search address, society, landmark..."
-          autocomplete="off"
-          oninput="mapSearchDebounce()"
-          onkeydown="mapSearchKeyNav(event)">
+        <input type="text" id="mapSearchInput" placeholder="Search address, society, landmark..." autocomplete="off"
+          oninput="mapSearchDebounce()" onkeydown="mapSearchKeyNav(event)">
         <div class="map-search-drop" id="mapSearchDrop"></div>
       </div>
       <div class="map-modal-body" id="mapPickerDiv">
@@ -1383,38 +1387,38 @@
     // ── Location Searchable Picker ──────────────────────────────
     const NCR_AREAS = [
       // ─── Ghaziabad Localities ───
-      { v: 'Indirapuram',           g: 'Ghaziabad' },
-      { v: 'Vasundhara',            g: 'Ghaziabad' },
-      { v: 'Kaushambi',             g: 'Ghaziabad' },
-      { v: 'Vaishali',              g: 'Ghaziabad' },
-      { v: 'Raj Nagar Extension',   g: 'Ghaziabad' },
-      { v: 'Crossing Republik',     g: 'Ghaziabad' },
-      { v: 'Siddharth Vihar',       g: 'Ghaziabad' },
-      { v: 'Mohan Nagar',           g: 'Ghaziabad' },
-      { v: 'Pratap Vihar',          g: 'Ghaziabad' },
-      { v: 'Vijay Nagar',           g: 'Ghaziabad' },
-      { v: 'Sahibabad',             g: 'Ghaziabad' },
-      { v: 'Govindpuram',           g: 'Ghaziabad' },
-      { v: 'Shastri Nagar',         g: 'Ghaziabad' },
-      { v: 'Gandhi Nagar',          g: 'Ghaziabad' },
-      { v: 'Shalimar Garden',       g: 'Ghaziabad' },
-      { v: 'New Shalimar Garden',   g: 'Ghaziabad' },
-      { v: 'Nandgram',              g: 'Ghaziabad' },
-      { v: 'Ankur Vihar',           g: 'Ghaziabad' },
-      { v: 'Surya Nagar',           g: 'Ghaziabad' },
-      { v: 'Lal Kuan',              g: 'Ghaziabad' },
-      { v: 'Dundahera',             g: 'Ghaziabad' },
-      { v: 'Dasna',                 g: 'Ghaziabad' },
-      { v: 'Loni',                  g: 'Ghaziabad' },
-      { v: 'Mehrauli',              g: 'Ghaziabad' },
-      { v: 'Bulandshahr Road',      g: 'Ghaziabad' },
-      { v: 'NH-58 Zone',            g: 'Ghaziabad' },
+      { v: 'Indirapuram', g: 'Ghaziabad' },
+      { v: 'Vasundhara', g: 'Ghaziabad' },
+      { v: 'Kaushambi', g: 'Ghaziabad' },
+      { v: 'Vaishali', g: 'Ghaziabad' },
+      { v: 'Raj Nagar Extension', g: 'Ghaziabad' },
+      { v: 'Crossing Republik', g: 'Ghaziabad' },
+      { v: 'Siddharth Vihar', g: 'Ghaziabad' },
+      { v: 'Mohan Nagar', g: 'Ghaziabad' },
+      { v: 'Pratap Vihar', g: 'Ghaziabad' },
+      { v: 'Vijay Nagar', g: 'Ghaziabad' },
+      { v: 'Sahibabad', g: 'Ghaziabad' },
+      { v: 'Govindpuram', g: 'Ghaziabad' },
+      { v: 'Shastri Nagar', g: 'Ghaziabad' },
+      { v: 'Gandhi Nagar', g: 'Ghaziabad' },
+      { v: 'Shalimar Garden', g: 'Ghaziabad' },
+      { v: 'New Shalimar Garden', g: 'Ghaziabad' },
+      { v: 'Nandgram', g: 'Ghaziabad' },
+      { v: 'Ankur Vihar', g: 'Ghaziabad' },
+      { v: 'Surya Nagar', g: 'Ghaziabad' },
+      { v: 'Lal Kuan', g: 'Ghaziabad' },
+      { v: 'Dundahera', g: 'Ghaziabad' },
+      { v: 'Dasna', g: 'Ghaziabad' },
+      { v: 'Loni', g: 'Ghaziabad' },
+      { v: 'Mehrauli', g: 'Ghaziabad' },
+      { v: 'Bulandshahr Road', g: 'Ghaziabad' },
+      { v: 'NH-58 Zone', g: 'Ghaziabad' },
       // ─── Noida Sectors ───
-      { v: 'Sector 1',  g: 'Noida' }, { v: 'Sector 2',  g: 'Noida' }, { v: 'Sector 3',  g: 'Noida' },
-      { v: 'Sector 4',  g: 'Noida' }, { v: 'Sector 5',  g: 'Noida' }, { v: 'Sector 6',  g: 'Noida' },
-      { v: 'Sector 7',  g: 'Noida' }, { v: 'Sector 8',  g: 'Noida' }, { v: 'Sector 9',  g: 'Noida' },
+      { v: 'Sector 1', g: 'Noida' }, { v: 'Sector 2', g: 'Noida' }, { v: 'Sector 3', g: 'Noida' },
+      { v: 'Sector 4', g: 'Noida' }, { v: 'Sector 5', g: 'Noida' }, { v: 'Sector 6', g: 'Noida' },
+      { v: 'Sector 7', g: 'Noida' }, { v: 'Sector 8', g: 'Noida' }, { v: 'Sector 9', g: 'Noida' },
       { v: 'Sector 10', g: 'Noida' }, { v: 'Sector 11', g: 'Noida' }, { v: 'Sector 12', g: 'Noida' },
-      { v: 'Sector 14', g: 'Noida' }, { v: 'Sector 15', g: 'Noida' }, { v: 'Sector 15A',g: 'Noida' },
+      { v: 'Sector 14', g: 'Noida' }, { v: 'Sector 15', g: 'Noida' }, { v: 'Sector 15A', g: 'Noida' },
       { v: 'Sector 16', g: 'Noida' }, { v: 'Sector 17', g: 'Noida' }, { v: 'Sector 18', g: 'Noida' },
       { v: 'Sector 19', g: 'Noida' }, { v: 'Sector 20', g: 'Noida' }, { v: 'Sector 21', g: 'Noida' },
       { v: 'Sector 22', g: 'Noida' }, { v: 'Sector 23', g: 'Noida' }, { v: 'Sector 24', g: 'Noida' },
@@ -1435,67 +1439,67 @@
       { v: 'Sector 75', g: 'Noida' }, { v: 'Sector 76', g: 'Noida' }, { v: 'Sector 77', g: 'Noida' },
       { v: 'Sector 78', g: 'Noida' }, { v: 'Sector 79', g: 'Noida' }, { v: 'Sector 82', g: 'Noida' },
       { v: 'Sector 91', g: 'Noida' }, { v: 'Sector 92', g: 'Noida' }, { v: 'Sector 93', g: 'Noida' },
-      { v: 'Sector 93A',g: 'Noida' }, { v: 'Sector 93B',g: 'Noida' }, { v: 'Sector 94', g: 'Noida' },
-      { v: 'Sector 96', g: 'Noida' }, { v: 'Sector 99', g: 'Noida' }, { v: 'Sector 100',g: 'Noida' },
-      { v: 'Sector 104',g: 'Noida' }, { v: 'Sector 105',g: 'Noida' }, { v: 'Sector 107',g: 'Noida' },
-      { v: 'Sector 108',g: 'Noida' }, { v: 'Sector 110',g: 'Noida' }, { v: 'Sector 113',g: 'Noida' },
-      { v: 'Sector 116',g: 'Noida' }, { v: 'Sector 117',g: 'Noida' }, { v: 'Sector 118',g: 'Noida' },
-      { v: 'Sector 119',g: 'Noida' }, { v: 'Sector 120',g: 'Noida' }, { v: 'Sector 121',g: 'Noida' },
-      { v: 'Sector 122',g: 'Noida' }, { v: 'Sector 125',g: 'Noida' }, { v: 'Sector 126',g: 'Noida' },
-      { v: 'Sector 127',g: 'Noida' }, { v: 'Sector 128',g: 'Noida' }, { v: 'Sector 129',g: 'Noida' },
-      { v: 'Sector 130',g: 'Noida' }, { v: 'Sector 131',g: 'Noida' }, { v: 'Sector 132',g: 'Noida' },
-      { v: 'Sector 133',g: 'Noida' }, { v: 'Sector 134',g: 'Noida' }, { v: 'Sector 135',g: 'Noida' },
-      { v: 'Sector 136',g: 'Noida' }, { v: 'Sector 137',g: 'Noida' }, { v: 'Sector 143',g: 'Noida' },
-      { v: 'Sector 144',g: 'Noida' }, { v: 'Sector 150',g: 'Noida' }, { v: 'Sector 151',g: 'Noida' },
-      { v: 'Sector 152',g: 'Noida' }, { v: 'Sector 153',g: 'Noida' }, { v: 'Sector 155',g: 'Noida' },
-      { v: 'Sector 158',g: 'Noida' }, { v: 'Sector 159',g: 'Noida' }, { v: 'Sector 162',g: 'Noida' },
-      { v: 'Sector 163',g: 'Noida' }, { v: 'Sector 164',g: 'Noida' }, { v: 'Sector 165',g: 'Noida' },
-      { v: 'Sector 166',g: 'Noida' }, { v: 'Sector 168',g: 'Noida' },
+      { v: 'Sector 93A', g: 'Noida' }, { v: 'Sector 93B', g: 'Noida' }, { v: 'Sector 94', g: 'Noida' },
+      { v: 'Sector 96', g: 'Noida' }, { v: 'Sector 99', g: 'Noida' }, { v: 'Sector 100', g: 'Noida' },
+      { v: 'Sector 104', g: 'Noida' }, { v: 'Sector 105', g: 'Noida' }, { v: 'Sector 107', g: 'Noida' },
+      { v: 'Sector 108', g: 'Noida' }, { v: 'Sector 110', g: 'Noida' }, { v: 'Sector 113', g: 'Noida' },
+      { v: 'Sector 116', g: 'Noida' }, { v: 'Sector 117', g: 'Noida' }, { v: 'Sector 118', g: 'Noida' },
+      { v: 'Sector 119', g: 'Noida' }, { v: 'Sector 120', g: 'Noida' }, { v: 'Sector 121', g: 'Noida' },
+      { v: 'Sector 122', g: 'Noida' }, { v: 'Sector 125', g: 'Noida' }, { v: 'Sector 126', g: 'Noida' },
+      { v: 'Sector 127', g: 'Noida' }, { v: 'Sector 128', g: 'Noida' }, { v: 'Sector 129', g: 'Noida' },
+      { v: 'Sector 130', g: 'Noida' }, { v: 'Sector 131', g: 'Noida' }, { v: 'Sector 132', g: 'Noida' },
+      { v: 'Sector 133', g: 'Noida' }, { v: 'Sector 134', g: 'Noida' }, { v: 'Sector 135', g: 'Noida' },
+      { v: 'Sector 136', g: 'Noida' }, { v: 'Sector 137', g: 'Noida' }, { v: 'Sector 143', g: 'Noida' },
+      { v: 'Sector 144', g: 'Noida' }, { v: 'Sector 150', g: 'Noida' }, { v: 'Sector 151', g: 'Noida' },
+      { v: 'Sector 152', g: 'Noida' }, { v: 'Sector 153', g: 'Noida' }, { v: 'Sector 155', g: 'Noida' },
+      { v: 'Sector 158', g: 'Noida' }, { v: 'Sector 159', g: 'Noida' }, { v: 'Sector 162', g: 'Noida' },
+      { v: 'Sector 163', g: 'Noida' }, { v: 'Sector 164', g: 'Noida' }, { v: 'Sector 165', g: 'Noida' },
+      { v: 'Sector 166', g: 'Noida' }, { v: 'Sector 168', g: 'Noida' },
       // ─── Greater Noida ───
-      { v: 'Greater Noida West',   g: 'Greater Noida' },
-      { v: 'Alpha 1',              g: 'Greater Noida' },
-      { v: 'Alpha 2',              g: 'Greater Noida' },
-      { v: 'Beta 1',               g: 'Greater Noida' },
-      { v: 'Beta 2',               g: 'Greater Noida' },
-      { v: 'Gamma 1',              g: 'Greater Noida' },
-      { v: 'Gamma 2',              g: 'Greater Noida' },
-      { v: 'Delta 1',              g: 'Greater Noida' },
-      { v: 'Delta 2',              g: 'Greater Noida' },
-      { v: 'Zeta 1',               g: 'Greater Noida' },
-      { v: 'Zeta 2',               g: 'Greater Noida' },
-      { v: 'Omega',                g: 'Greater Noida' },
-      { v: 'Sigma 1',              g: 'Greater Noida' },
-      { v: 'Sigma 2',              g: 'Greater Noida' },
-      { v: 'Sigma 3',              g: 'Greater Noida' },
-      { v: 'Sigma 4',              g: 'Greater Noida' },
-      { v: 'Chi 1',                g: 'Greater Noida' },
-      { v: 'Chi 2',                g: 'Greater Noida' },
-      { v: 'Chi 4',                g: 'Greater Noida' },
-      { v: 'Chi 5',                g: 'Greater Noida' },
-      { v: 'Phi 1',                g: 'Greater Noida' },
-      { v: 'Phi 2',                g: 'Greater Noida' },
-      { v: 'Phi 3',                g: 'Greater Noida' },
-      { v: 'Psi 1',                g: 'Greater Noida' },
-      { v: 'Psi 2',                g: 'Greater Noida' },
-      { v: 'Eta 1',                g: 'Greater Noida' },
-      { v: 'Eta 2',                g: 'Greater Noida' },
-      { v: 'Xi 1',                 g: 'Greater Noida' },
-      { v: 'Mu 1',                 g: 'Greater Noida' },
-      { v: 'Omicron 1',            g: 'Greater Noida' },
-      { v: 'Omicron 2',            g: 'Greater Noida' },
-      { v: 'Omicron 3',            g: 'Greater Noida' },
-      { v: 'Knowledge Park 1',     g: 'Greater Noida' },
-      { v: 'Knowledge Park 2',     g: 'Greater Noida' },
-      { v: 'Knowledge Park 3',     g: 'Greater Noida' },
-      { v: 'Knowledge Park 4',     g: 'Greater Noida' },
-      { v: 'Knowledge Park 5',     g: 'Greater Noida' },
-      { v: 'NRI City',             g: 'Greater Noida' },
-      { v: 'Swarn Nagri',          g: 'Greater Noida' },
-      { v: 'Kasna',                g: 'Greater Noida' },
-      { v: 'Surajpur',             g: 'Greater Noida' },
-      { v: 'Sector 1 (GN)',        g: 'Greater Noida' },
-      { v: 'Sector 2 (GN)',        g: 'Greater Noida' },
-      { v: 'Sector 3 (GN)',        g: 'Greater Noida' },
+      { v: 'Greater Noida West', g: 'Greater Noida' },
+      { v: 'Alpha 1', g: 'Greater Noida' },
+      { v: 'Alpha 2', g: 'Greater Noida' },
+      { v: 'Beta 1', g: 'Greater Noida' },
+      { v: 'Beta 2', g: 'Greater Noida' },
+      { v: 'Gamma 1', g: 'Greater Noida' },
+      { v: 'Gamma 2', g: 'Greater Noida' },
+      { v: 'Delta 1', g: 'Greater Noida' },
+      { v: 'Delta 2', g: 'Greater Noida' },
+      { v: 'Zeta 1', g: 'Greater Noida' },
+      { v: 'Zeta 2', g: 'Greater Noida' },
+      { v: 'Omega', g: 'Greater Noida' },
+      { v: 'Sigma 1', g: 'Greater Noida' },
+      { v: 'Sigma 2', g: 'Greater Noida' },
+      { v: 'Sigma 3', g: 'Greater Noida' },
+      { v: 'Sigma 4', g: 'Greater Noida' },
+      { v: 'Chi 1', g: 'Greater Noida' },
+      { v: 'Chi 2', g: 'Greater Noida' },
+      { v: 'Chi 4', g: 'Greater Noida' },
+      { v: 'Chi 5', g: 'Greater Noida' },
+      { v: 'Phi 1', g: 'Greater Noida' },
+      { v: 'Phi 2', g: 'Greater Noida' },
+      { v: 'Phi 3', g: 'Greater Noida' },
+      { v: 'Psi 1', g: 'Greater Noida' },
+      { v: 'Psi 2', g: 'Greater Noida' },
+      { v: 'Eta 1', g: 'Greater Noida' },
+      { v: 'Eta 2', g: 'Greater Noida' },
+      { v: 'Xi 1', g: 'Greater Noida' },
+      { v: 'Mu 1', g: 'Greater Noida' },
+      { v: 'Omicron 1', g: 'Greater Noida' },
+      { v: 'Omicron 2', g: 'Greater Noida' },
+      { v: 'Omicron 3', g: 'Greater Noida' },
+      { v: 'Knowledge Park 1', g: 'Greater Noida' },
+      { v: 'Knowledge Park 2', g: 'Greater Noida' },
+      { v: 'Knowledge Park 3', g: 'Greater Noida' },
+      { v: 'Knowledge Park 4', g: 'Greater Noida' },
+      { v: 'Knowledge Park 5', g: 'Greater Noida' },
+      { v: 'NRI City', g: 'Greater Noida' },
+      { v: 'Swarn Nagri', g: 'Greater Noida' },
+      { v: 'Kasna', g: 'Greater Noida' },
+      { v: 'Surajpur', g: 'Greater Noida' },
+      { v: 'Sector 1 (GN)', g: 'Greater Noida' },
+      { v: 'Sector 2 (GN)', g: 'Greater Noida' },
+      { v: 'Sector 3 (GN)', g: 'Greater Noida' },
     ];
 
     let _locFocusIdx = -1;
@@ -1505,11 +1509,11 @@
       const s = (q || '').trim().toLowerCase();
       // Show top 8 per group when empty, filtered when typing
       const ghaziabad = NCR_AREAS.filter(a => a.g === 'Ghaziabad' && (!s || a.v.toLowerCase().includes(s)));
-      const noida     = NCR_AREAS.filter(a => a.g === 'Noida'     && (!s || a.v.toLowerCase().includes(s)));
-      const gnNoida   = NCR_AREAS.filter(a => a.g === 'Greater Noida' && (!s || a.v.toLowerCase().includes(s)));
+      const noida = NCR_AREAS.filter(a => a.g === 'Noida' && (!s || a.v.toLowerCase().includes(s)));
+      const gnNoida = NCR_AREAS.filter(a => a.g === 'Greater Noida' && (!s || a.v.toLowerCase().includes(s)));
       const capGhz = s ? ghaziabad : ghaziabad.slice(0, 6);
-      const capNoi = s ? noida     : noida.slice(0, 8);
-      const capGN  = s ? gnNoida   : gnNoida.slice(0, 6);
+      const capNoi = s ? noida : noida.slice(0, 8);
+      const capGN = s ? gnNoida : gnNoida.slice(0, 6);
       if (!capGhz.length && !capNoi.length && !capGN.length) {
         drop.innerHTML = '<div style="padding:12px 14px;font-size:0.83rem;color:var(--muted)">No matching area found</div>';
         drop.classList.add('open');
