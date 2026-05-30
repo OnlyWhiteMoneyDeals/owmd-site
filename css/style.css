@@ -267,6 +267,17 @@ h4 {
   flex-shrink: 0;
 }
 
+#navbar-root {
+  min-height: 118px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  #navbar-root {
+    min-height: 46px;
+  }
+}
+
 /* NAVBAR */
 .navbar {
   position: sticky;
