@@ -1,3 +1,8 @@
 # 301 Redirect: www → non-www (canonical domain is onlywhitemoneydeals.com)
 # Cloudflare Pages processes this file automatically on every request.
 https://www.onlywhitemoneydeals.com/* https://onlywhitemoneydeals.com/:splat 301
+
+# Redirect legacy admin list-property URL to the active list-property page
+/admin/list-property.html /list-property.html 301
+/admin/list-property /list-property.html 301
+
