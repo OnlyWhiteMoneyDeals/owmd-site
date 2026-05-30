@@ -27,8 +27,8 @@
   </noscript>
   <link rel="icon" type="image/png" href="assets/logo1.png">
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfdVD8gjMdJO_V7CECCKotFycBEOJYj20&libraries=places" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <style>
     :root {
       --purple: #6B1FA8;
@@ -1380,7 +1380,10 @@
   <script>
     const _sUrl = 'https://lidrknxjezctdjrxwffz.supabase.co';
     const _sKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxpZHJrbnhqZXpjdGRqcnh3ZmZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzczODQsImV4cCI6MjA5NDc1MzM4NH0.xTQ2PFpQtG6f_C-2IitVCwFWBYJhnlU9Ei5oA5rhL48';
-    const supabaseClient = window.supabase.createClient(_sUrl, _sKey);
+    let supabaseClient;
+    document.addEventListener('DOMContentLoaded', () => {
+      supabaseClient = window.supabase.createClient(_sUrl, _sKey);
+    });
 
     let uploadedPhotos = []; // array of {blob: Blob, url: string}
 
