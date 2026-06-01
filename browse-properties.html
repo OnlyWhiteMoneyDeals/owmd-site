@@ -1436,15 +1436,32 @@
       renderGrid(filtered);
     }
 
+    let isRefreshing = false;
+    let lastFetchTime = 0;
+
     async function refreshListings() {
-      await fetchListings();
-      applyFilters();
-      // Deep link: auto-open property if ?id= is in the URL
-      const urlId = new URLSearchParams(window.location.search).get('id');
-      if (urlId && allVerifiedListings.find(function(p){ return p.id === urlId; })) {
-        setTimeout(function() { openDetail(urlId); }, 200);
+      if (isRefreshing) return;
+      const now = Date.now();
+      // If we already fetched successfully within the last 3 seconds, just apply filters locally
+      if (now - lastFetchTime < 3000) {
+        applyFilters();
+        return;
+      }
+      isRefreshing = true;
+      try {
+        await fetchListings();
+        lastFetchTime = Date.now();
+        applyFilters();
+        // Deep link: auto-open property if ?id= is in the URL
+        const urlId = new URLSearchParams(window.location.search).get('id');
+        if (urlId && allVerifiedListings.find(function(p){ return p.id === urlId; })) {
+          setTimeout(function() { openDetail(urlId); }, 200);
+        }
+      } finally {
+        isRefreshing = false;
       }
     }
+
 
     function resetFilters() {
       document.getElementById('filterLocation').value = '';
