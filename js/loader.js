@@ -187,12 +187,16 @@
         if (pills.length > 0) {
           pills.forEach(p => {
             const isActive = p.getAttribute('href') === '#' + id;
-            p.classList.toggle('active', isActive);
             if (isActive && pillsContainer && window.innerWidth <= 768) {
+              // Read layout values BEFORE class changes invalidate styles
+              const offsetLeft = p.offsetLeft;
+              const offsetWidth = p.offsetWidth;
+              const containerWidth = pillsContainer.offsetWidth;
               requestAnimationFrame(() => {
-                pillsContainer.scrollLeft = p.offsetLeft - pillsContainer.offsetWidth / 2 + p.offsetWidth / 2;
+                pillsContainer.scrollLeft = offsetLeft - containerWidth / 2 + offsetWidth / 2;
               });
             }
+            p.classList.toggle('active', isActive);
           });
         }
       }
@@ -263,19 +267,23 @@
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
 
-    // Mobile Read More truncation
-    document.querySelectorAll('.mobile-truncate').forEach(el => {
-      if (window.innerWidth <= 768 && el.scrollHeight > 150) {
-        const btn = document.createElement('button');
-        btn.className = 'read-more-btn';
-        btn.textContent = 'Read More';
-        el.parentNode.insertBefore(btn, el.nextSibling);
-        btn.addEventListener('click', () => {
-          const expanded = el.classList.toggle('expanded');
-          btn.textContent = expanded ? 'Read Less' : 'Read More';
-        });
-      }
-    });
+    // Mobile Read More truncation - deferred to a separate frame to prevent forced reflow
+    setTimeout(() => {
+      document.querySelectorAll('.mobile-truncate').forEach(el => {
+        if (window.innerWidth <= 768 && el.scrollHeight > 150) {
+          // Double check to avoid duplicate button creation if it already exists
+          if (el.nextSibling && el.nextSibling.classList && el.nextSibling.classList.contains('read-more-btn')) return;
+          const btn = document.createElement('button');
+          btn.className = 'read-more-btn';
+          btn.textContent = 'Read More';
+          el.parentNode.insertBefore(btn, el.nextSibling);
+          btn.addEventListener('click', () => {
+            const expanded = el.classList.toggle('expanded');
+            btn.textContent = expanded ? 'Read Less' : 'Read More';
+          });
+        }
+      });
+    }, 100);
 
     // Obfuscated dynamic contact details logic
     document.addEventListener('click', function (e) {
