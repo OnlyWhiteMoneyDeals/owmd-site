@@ -8,3 +8,6 @@ Disallow: /owmd-team-portal.html
 
 # Sitemap
 Sitemap: https://onlywhitemoneydeals.com/sitemap.xml
+
+# LLM / AI Search Engine Index Context
+# llms-txt: https://onlywhitemoneydeals.com/llms.txt
