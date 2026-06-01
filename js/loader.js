@@ -285,6 +285,25 @@
       });
     }, 100);
 
+    // Dynamic Video (YouTube Facade) Click Handler
+    document.querySelectorAll('.dynamic-video').forEach(wrapper => {
+      wrapper.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const title = this.getAttribute('data-title');
+        const isNoCookie = this.getAttribute('data-nocookie') === 'true';
+        const domain = isNoCookie ? 'youtube-nocookie.com' : 'youtube.com';
+        
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.${domain}/embed/${id}?autoplay=1&rel=0`;
+        iframe.title = title;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', 'true');
+        
+        this.innerHTML = '';
+        this.appendChild(iframe);
+      });
+    });
+
     // Obfuscated dynamic contact details logic
     document.addEventListener('click', function (e) {
       const el = e.target.closest('.owmd-dynamic-tel, .owmd-dynamic-email, .owmd-dynamic-wa');

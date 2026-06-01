@@ -174,15 +174,54 @@ h4 {
   /* 16:9 */
   height: 0;
   background: #000;
+  overflow: hidden;
+  border-radius: var(--radius);
 }
 
-.video-wrapper iframe {
+.video-wrapper iframe,
+.video-wrapper img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.video-wrapper img {
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.5s ease;
+}
+
+.video-wrapper:hover img {
+  opacity: 0.85;
+  transform: scale(1.02);
+}
+
+.video-wrapper .play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  background-color: rgba(33, 33, 33, 0.8);
+  border: none;
+  border-radius: 12%;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  z-index: 2;
+  pointer-events: none; /* Let clicks bubble to wrapper */
+}
+
+.video-wrapper:hover .play-btn {
+  background-color: #ff0000; /* YouTube Red */
 }
 
 .video-info {
