@@ -3603,6 +3603,11 @@ h4 {
     grid-column: span 1;
   }
   
+  .lp-expert-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
   .lp-footer-content {
     flex-direction: column;
     text-align: center;
