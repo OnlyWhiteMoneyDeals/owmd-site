@@ -133,7 +133,6 @@
     markActiveNav();
 
     const navbar = document.getElementById('navbar');
-    if (!navbar) return;
 
     const stBtn = document.getElementById('scrollTop');
     const sections = document.querySelectorAll('section[id]');
@@ -148,7 +147,7 @@
       ticking = true;
       requestAnimationFrame(() => {
         const scrollY = window.scrollY;
-        navbar.classList.toggle('scrolled', scrollY > 40);
+        if (navbar) navbar.classList.toggle('scrolled', scrollY > 40);
         if (stBtn) stBtn.classList.toggle('visible', scrollY > 400);
 
         if (scrollY < 50) {
@@ -244,7 +243,7 @@
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
           e.preventDefault();
-          window.scrollTo({ top: target.offsetTop - navbar.offsetHeight - 12, behavior: 'smooth' });
+          window.scrollTo({ top: target.offsetTop - (navbar ? navbar.offsetHeight : 0) - 12, behavior: 'smooth' });
         }
       });
     });
