@@ -1600,6 +1600,7 @@ h4 {
 .ucc-right {
   flex: 1;
   padding: 48px 40px;
+  min-height: 400px;
 }
 
 .ucc-info-stack {
@@ -1615,6 +1616,11 @@ h4 {
   display: flex;
   align-items: flex-start;
   gap: 16px;
+}
+
+.ucc-info-item > div:last-child {
+  min-width: 0;
+  flex: 1;
 }
 
 .ucc-info-item .ci-icon {
@@ -1644,6 +1650,8 @@ h4 {
   font-size: 1.05rem;
   font-weight: 500;
   line-height: 1.5;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .ucc-info-item a:hover {
@@ -1975,9 +1983,16 @@ h4 {
     flex-direction: column;
   }
 
-  .ucc-left,
-  .ucc-right {
+  .ucc-left {
     padding: 32px 24px;
+    flex: none;
+  }
+
+  .ucc-right {
+    padding: 0;
+    height: 300px;
+    min-height: 300px;
+    flex: none;
   }
 
   .footer-grid {
@@ -2625,10 +2640,7 @@ h4 {
 
 @media (max-width: 768px) {
   .floating-social-sidebar {
-    bottom: 100px;
-    top: auto;
-    transform: none;
-    padding-left: 10px;
+    display: none;
   }
 }
 
@@ -2899,7 +2911,7 @@ h4 {
   }
 }
 
-/* ─── AD LANDING PAGE (landing.html) STYLES ───────────────── */
+/* ─── AD LANDING PAGE (transparent-deals.html) STYLES ───────────────── */
 .lp-body {
   background: var(--white);
   color: var(--text);
@@ -3106,6 +3118,7 @@ h4 {
 .lp-slider {
   width: 100%;
   -webkit-appearance: none;
+  appearance: none;
   background: rgba(255, 255, 255, 0.15);
   height: 8px;
   border-radius: 5px;
@@ -3553,6 +3566,7 @@ h4 {
   
   .lp-hero {
     padding: 40px 0;
+    background-image: linear-gradient(135deg, rgba(17, 17, 30, 0.92) 0%, rgba(30, 20, 50, 0.88) 60%, rgba(17, 17, 30, 0.95) 100%), url('../assets/responsive/hero_bg-600.webp');
   }
   
   .lp-hero-left h1 {

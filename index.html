@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="assets/hero_bg.webp" as="image"
+          imagesrcset="assets/responsive/hero_bg-600.webp 600w, assets/hero_bg.webp 1920w"
+          imagesizes="100vw" fetchpriority="high">
     <link rel="stylesheet" href="css/style.min.css?v=4">
 
     <!-- Preconnects -->
@@ -871,7 +874,7 @@
                 </div>
 
                 <!-- Right Panel: Office Map -->
-                <div class="ucc-right" style="padding: 0; overflow: hidden; display: flex; min-height: 400px;">
+                <div class="ucc-right" style="padding: 0; overflow: hidden; display: flex;">
                     <iframe src="https://maps.google.com/maps?q=28.6399325,77.3781436&output=embed&z=17"
                         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         title="Only White Money Deals Office Location"

@@ -43,7 +43,7 @@
       <img src="assets/logo1.webp"
            srcset="assets/responsive/logo1-400.webp 400w, assets/logo1.webp 566w"
            sizes="(max-width: 480px) 180px, 240px"
-           width="240" height="74" alt="Only White Money Deals">
+           width="240" height="74" alt="Only White Money Deals" fetchpriority="high">
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html" data-nav="home">Home</a></li>

@@ -16,6 +16,9 @@
     <meta property="og:image" content="https://onlywhitemoneydeals.com/assets/logo1.webp">
     <meta name="robots" content="noindex, follow">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+    <link rel="preload" href="assets/hero_bg.webp" as="image"
+          imagesrcset="assets/responsive/hero_bg-600.webp 600w, assets/hero_bg.webp 1920w"
+          imagesizes="100vw" fetchpriority="high">
     <link rel="stylesheet" href="css/style.min.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,6 +63,12 @@
             text-align: center;
             color: #fff;
             border-bottom: 4px solid var(--purple-light);
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                background-image: linear-gradient(135deg, rgba(17, 17, 30, 0.55) 0%, rgba(30, 20, 50, 0.45) 60%, rgba(17, 17, 30, 0.6) 100%), url('assets/responsive/hero_bg-600.webp');
+            }
         }
 
         .page-hero::before {
