@@ -1510,7 +1510,7 @@
           </a>
 
           <!-- Form Listing Card -->
-          <a href="#formCard" class="choice-card form-highlight">
+          <a href="#formCard" class="choice-card form-highlight" onclick="showListingForm(event)">
             <span class="choice-badge purple-badge">Self-service</span>
             <div class="choice-icon-wrap">
               📋
@@ -1535,7 +1535,7 @@
         </div>
       </div>
 
-      <div class="form-card" id="formCard">
+      <div class="form-card" id="formCard" style="display: none;">
         <div class="form-card-header">
           <h2>Property Listing Form</h2>
           <p>All fields marked <span style="color:#FCA5A5">*</span> are required. Your listing will be reviewed within
@@ -1735,6 +1735,17 @@
   </div>
 
   <script>
+    function showListingForm(event) {
+      event.preventDefault();
+      const formCard = document.getElementById('formCard');
+      if (formCard) {
+        formCard.style.display = 'block';
+        requestAnimationFrame(() => {
+          formCard.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+    }
+
     const _sUrl = 'https://lidrknxjezctdjrxwffz.supabase.co';
     const _sKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxpZHJrbnhqZXpjdGRqcnh3ZmZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzczODQsImV4cCI6MjA5NDc1MzM4NH0.xTQ2PFpQtG6f_C-2IitVCwFWBYJhnlU9Ei5oA5rhL48';
     let supabaseClient;
