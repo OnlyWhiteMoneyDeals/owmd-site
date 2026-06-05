@@ -32,6 +32,8 @@ def verify_all():
             # Check local file
             # Remove hash or query params if any
             clean_href = href.split('?')[0].split('#')[0]
+            if clean_href.startswith('/'):
+                clean_href = clean_href.lstrip('/')
             asset_path = os.path.join(base_path, clean_href)
             if not os.path.exists(asset_path):
                 print(f"  🔴 [ERROR] Broken Link Ref: {href} (Calculated: {clean_href})")
@@ -46,6 +48,8 @@ def verify_all():
                 continue
             
             clean_src = src.split('?')[0].split('#')[0]
+            if clean_src.startswith('/'):
+                clean_src = clean_src.lstrip('/')
             asset_path = os.path.join(base_path, clean_src)
             if not os.path.exists(asset_path):
                 print(f"  🔴 [ERROR] Broken Script Ref: {src} (Calculated: {clean_src})")
@@ -74,6 +78,8 @@ def verify_all():
                 continue
             
             clean_src = src.split('?')[0].split('#')[0]
+            if clean_src.startswith('/'):
+                clean_src = clean_src.lstrip('/')
             asset_path = os.path.join(base_path, clean_src)
             if not os.path.exists(asset_path):
                 print(f"  🔴 [ERROR] Broken Image Ref: {src} (Calculated: {clean_src})")
@@ -89,6 +95,8 @@ def verify_all():
                 continue
             
             clean_href = href.split('?')[0].split('#')[0]
+            if clean_href.startswith('/'):
+                clean_href = clean_href.lstrip('/')
             if clean_href.endswith('.html'):
                 asset_path = os.path.join(base_path, clean_href)
                 if not os.path.exists(asset_path):
